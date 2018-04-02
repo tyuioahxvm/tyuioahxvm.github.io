@@ -1,0 +1,796 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  
+    <title>Quantum Algorithms | Welcome to my world!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="JinCheng Ye">
+    
+
+    
+    <meta name="description" content="Basic ConceptQubit一位量子比特可以表示为$|0\rangle,|1\rangle$态的叠加，记为：  $$ |\psi\rangle = \alpha|0\rangle+\beta|1\rangle \\ |\alpha|^2+|\beta|^2=1 \\ \alpha = \cos \frac{\theta}{2} \\ \beta = e^{i\phi}\sin \frac{">
+<meta name="keywords" content="Quantum Algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Quantum Algorithms">
+<meta property="og:url" content="http://yoursite.com/2018/04/01/Quantum-Algorithms/index.html">
+<meta property="og:site_name" content="Welcome to my world!">
+<meta property="og:description" content="Basic ConceptQubit一位量子比特可以表示为$|0\rangle,|1\rangle$态的叠加，记为：  $$ |\psi\rangle = \alpha|0\rangle+\beta|1\rangle \\ |\alpha|^2+|\beta|^2=1 \\ \alpha = \cos \frac{\theta}{2} \\ \beta = e^{i\phi}\sin \frac{">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/Bloch_Sphere.png">
+<meta property="og:image" content="http://yoursite.com/images/Deutsch-Jozsa_Algorithm.png">
+<meta property="og:image" content="http://yoursite.com/images/Grovers_algorithm.png">
+<meta property="og:image" content="http://yoursite.com/images/Grovers_algorithm_geometry.png">
+<meta property="og:image" content="http://yoursite.com/images/PhaseCircuit-crop.png">
+<meta property="og:image" content="http://yoursite.com/images/CountingCircuit.png">
+<meta property="og:image" content="http://yoursite.com/images/BQP_complexity_class_diagram.png">
+<meta property="og:updated_time" content="2018-04-02T11:55:33.177Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Quantum Algorithms">
+<meta name="twitter:description" content="Basic ConceptQubit一位量子比特可以表示为$|0\rangle,|1\rangle$态的叠加，记为：  $$ |\psi\rangle = \alpha|0\rangle+\beta|1\rangle \\ |\alpha|^2+|\beta|^2=1 \\ \alpha = \cos \frac{\theta}{2} \\ \beta = e^{i\phi}\sin \frac{">
+<meta name="twitter:image" content="http://yoursite.com/images/Bloch_Sphere.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/psi.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/psi.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/psi.png">
+    
+    <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/psi.png" alt="Welcome to my world!" title="Welcome to my world!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Welcome to my world!">Welcome to my world!</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/01/Quantum-Algorithms/" title="Quantum Algorithms" itemprop="url">Quantum Algorithms</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-01T03:04:03.000Z" itemprop="datePublished"> 发表于 2018-04-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Concept"><span class="toc-number">1.</span> <span class="toc-text">Basic Concept</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Qubit"><span class="toc-number">1.1.</span> <span class="toc-text">Qubit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantum-logic-gate"><span class="toc-number">1.2.</span> <span class="toc-text">Quantum logic gate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Measure"><span class="toc-number">1.3.</span> <span class="toc-text">Measure</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Algorithm"><span class="toc-number">2.</span> <span class="toc-text">Quantum Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deutsch–Jozsa-algorithm"><span class="toc-number">3.</span> <span class="toc-text">Deutsch–Jozsa algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grover’s-Algorithm"><span class="toc-number">4.</span> <span class="toc-text">Grover’s Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Fourier-Transform"><span class="toc-number">5.</span> <span class="toc-text">Quantum Fourier Transform</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Phase-Estimation-Algorithm"><span class="toc-number">6.</span> <span class="toc-text">Quantum Phase Estimation Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Counting-Algorithm"><span class="toc-number">7.</span> <span class="toc-text">Quantum Counting Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bounded-error-quantum-polynomial-time-BQP"><span class="toc-number">8.</span> <span class="toc-text">bounded-error quantum polynomial time,BQP</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="Basic-Concept"><a href="#Basic-Concept" class="headerlink" title="Basic Concept"></a>Basic Concept</h2><h3 id="Qubit"><a href="#Qubit" class="headerlink" title="Qubit"></a>Qubit</h3><p>一位量子比特可以表示为$|0\rangle,|1\rangle$态的叠加，记为：</p>
+
+$$
+|\psi\rangle = \alpha|0\rangle+\beta|1\rangle \\
+|\alpha|^2+|\beta|^2=1 \\
+\alpha = \cos \frac{\theta}{2} \\
+\beta = e^{i\phi}\sin \frac{\theta}{2}
+$$
+
+<p>用线性代收的记号来表示可以记为：</p>
+
+$$
+|0\rangle = {\bigl [}{\begin{smallmatrix}1\\0\end{smallmatrix}}{\bigr ]} \\
+|1\rangle = {\bigl [}{\begin{smallmatrix}0\\1\end{smallmatrix}}{\bigr ]} \\
+|\psi\rangle = {\bigl [}{\begin{smallmatrix}\cos \frac{\theta}{2}\\e^{i\phi}\sin \frac{\theta}{2}\end{smallmatrix}}{\bigr ]}
+$$
+
+<p>一个量子比特可以直观地表示为一个Bloch球。</p>
+<p><img src="/images/Bloch_Sphere.png" alt=""></p>
+<p>多位量子比特的态没有这种直观的可视图，一般表示为：</p>
+
+$$
+|\psi\rangle = \sum_{i=0}^{2^n-1}c_i|i\rangle
+$$
+
+<h3 id="Quantum-logic-gate"><a href="#Quantum-logic-gate" class="headerlink" title="Quantum logic gate"></a>Quantum logic gate</h3><p><strong>单比特门</strong></p>
+<ul>
+<li>Hadamard (H) gate</li>
+</ul>
+
+$$
+H = \frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}
+$$
+
+<ul>
+<li>Pauli-X gate (= NOT gate)</li>
+</ul>
+
+$$
+X = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}
+$$
+
+<ul>
+<li>Pauli-Y gate</li>
+</ul>
+
+$$
+Y = \begin{bmatrix} 0 & -i \\ i & 0 \end{bmatrix}
+$$
+
+<ul>
+<li>Pauli-Z ($R_{\pi }$) gate</li>
+</ul>
+
+$$
+Z = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}
+$$
+
+<ul>
+<li>Phase shift ($R_{\phi }$) gates</li>
+</ul>
+
+$$
+R_{\phi }=\begin{bmatrix}1&0\\0&e^{i\phi }\end{bmatrix}
+$$
+
+<p><strong>双比特门</strong></p>
+<ul>
+<li>Controlled  gates</li>
+</ul>
+
+$$
+{\mbox{CNOT}}= cX={\begin{bmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0\end{bmatrix}}
+$$
+
+<p><strong>Solovay–Kitaev定理：任何量子门可以由一组较少的量子门（只需包含单比特与双比特门）有效逼近。</strong></p>
+<p>例如包括$H, \ R_{Z}(\pi /4),\ CNOT$这三个门的集合。</p>
+<h3 id="Measure"><a href="#Measure" class="headerlink" title="Measure"></a>Measure</h3><p>测量会导致量子态塌缩，至于塌缩到哪个态与测量基有关，测量基相互正交。一般测量基为${|i\rangle |i=0…2^n-1}$。</p>
+<p>若$|\psi\rangle = \sum_{i=0}^{2^n-1}c_i|i\rangle$，那么塌缩到$|i\rangle$的概率$\Pr(i) = |c_i|^2$。</p>
+<h2 id="Quantum-Algorithm"><a href="#Quantum-Algorithm" class="headerlink" title="Quantum Algorithm"></a>Quantum Algorithm</h2><p>量子算法基本步骤:</p>
+<ol>
+<li>配置初始态，一般为$|0\rangle ^{\otimes n}$。</li>
+<li>对量子比特操作一系列的量子门。</li>
+<li>对量子比特进行测量，记录测量结果（经典信息）。</li>
+<li>也许有必要根据步骤3的结果再次进行步骤2。</li>
+</ol>
+<p>对于量子分支控制还没有定论，根据步骤4这种方法进行分支控制这与经典的方法很相似。</p>
+<h2 id="Deutsch–Jozsa-algorithm"><a href="#Deutsch–Jozsa-algorithm" class="headerlink" title="Deutsch–Jozsa algorithm"></a>Deutsch–Jozsa algorithm</h2><p>问题：函数$f:{0,1}^n \to {0,1}$，判断函数是常数还是平衡的（一半是0，一半是1）。假定函数只能是其一。</p>
+<p>要正确做出判断，经典算法最坏需要进行$2^{n-1}+1$计算。量子算法只需要一次就可以完成。</p>
+<p><img src="/images/Deutsch-Jozsa_Algorithm.png" alt=""></p>
+<p>算法步骤：</p>
+<ol>
+<li>初始态为$|0\rangle ^{\otimes n}|1\rangle $，执行门$H^{\otimes n},\ H$后为：</li>
+</ol>
+
+$$
+{\frac  {1}{{\sqrt  {2^{{n+1}}}}}}\sum _{{x=0}}^{{2^{n}-1}}|x\rangle (|0\rangle -|1\rangle )
+$$
+
+<p>假设函数$f$是个黑盒，称为量子神谕（quantum oracle），记为$U_f$。它的实现$|x\rangle |y\rangle \to |x\rangle |y\oplus f(x)\rangle $的映射。</p>
+<ol>
+<li>继续执行门$U_f$得到：</li>
+</ol>
+
+$$
+{\frac  {1}{{\sqrt  {2^{{n+1}}}}}}\sum _{{x=0}}^{{2^{n}-1}}|x\rangle (|f(x)\rangle -|1\oplus f(x)\rangle ) = {\frac  {1}{{\sqrt  {2^{{n+1}}}}}}\sum _{{x=0}}^{{2^{n}-1}}(-1)^{{f(x)}}|x\rangle (|0\rangle -|1\rangle )
+$$
+
+<ol>
+<li>对前面的$n$个比特操作门$H^{\otimes n}$，现在可以不考虑最后一个比特。得到：</li>
+</ol>
+
+$$
+{\frac  {1}{2^{n}}}\sum _{{x=0}}^{{2^{n}-1}}(-1)^{{f(x)}}\left[\sum _{{y=0}}^{{2^{n}-1}}(-1)^{{x\cdot y}}|y\rangle \right]={\frac  {1}{2^{n}}}\sum _{{y=0}}^{{2^{n}-1}}\left[\sum _{{x=0}}^{{2^{n}-1}}(-1)^{{f(x)}}(-1)^{{x\cdot y}}\right]|y\rangle \\
+x\cdot y=x_{0}y_{0}\oplus x_{1}y_{1}\oplus \cdots \oplus x_{{n-1}}y_{{n-1}}
+$$
+
+<ol>
+<li>测量前面$n$个比特，得到态$|0\rangle ^{\otimes n}$的概率为：</li>
+</ol>
+
+$$
+{\bigg |}{\frac  {1}{2^{n}}}\sum _{{x=0}}^{{2^{n}-1}}(-1)^{{f(x)}}{\bigg |}^{2}
+$$
+
+<p>也就是说如果函数是常数我们得到态$|0\rangle ^{\otimes n}$的概率为1，函数是平衡则为0。</p>
+<h2 id="Grover’s-Algorithm"><a href="#Grover’s-Algorithm" class="headerlink" title="Grover’s Algorithm"></a>Grover’s Algorithm</h2><p>也成为量子搜索算法。</p>
+<p>问题：黑盒函数$f$只有一个输入的输出值与其它输入不，输入域大小为$N$，如何快速找出该特定的输入。</p>
+<p>经典算法复杂度为$O(N)$，量子算法复杂度为$O(\sqrt{N})$。</p>
+<p><img src="/images/Grovers_algorithm.png" alt=""></p>
+<p>函数的量子神谕$U_{\omega}$实现的映射是：</p>
+
+$$
+{\begin{cases}U_{\omega }|x\rangle =-|x\rangle &{\text{for }}x=\omega {\text{, that is, }}f(x)=1,\\U_{\omega }|x\rangle =|x\rangle &{\text{for }}x\neq \omega {\text{, that is, }}f(x)=0.\end{cases}}
+$$
+
+<p>算法步骤：</p>
+<ol>
+<li>初始态为$|0\rangle ^{\otimes n}|1\rangle $，执行门$H^{\otimes n}$后为：</li>
+</ol>
+
+$$
+|s\rangle ={\frac {1}{\sqrt {N}}}\sum _{x=0}^{N-1}|x\rangle
+$$
+
+<ol>
+<li>操作Grover算子，重复$\sqrt{N}$次。$G=U_{\omega}U_{s}$</li>
+</ol>
+<p>$$<br>U_{s}=2\left|s\right\rangle \left\langle s\right|-I<br>$$</p>
+<ol>
+<li>测量将以概率$\sin ^{2}\left({\Big (}\sqrt{N}+{\frac {1}{2}}{\Big )}\theta \right)$得到正确答案。</li>
+</ol>
+<ul>
+<li>几何解释</li>
+</ul>
+<p><img src="/images/Grovers_algorithm_geometry.png" alt=""></p>
+
+$$
+|s \rangle  = \frac{1}{\sqrt{N}}|\omega \rangle + \frac{\sqrt{N-1}}{\sqrt{N}}|s' \rangle \\
+|s' \rangle = \frac{1}{\sqrt{N-1}}\sum_{x\neq \omega}|x \rangle \\
+\sin {\frac {\theta }{2}}={\frac {1}{\sqrt {N}}}
+$$
+
+<p>Grover算子可以认为是$\omega \rangle,|s’ \rangle$张成的平面上转角$\theta$的算子。整个流程可以认为是振幅放大的过程。</p>
+<h2 id="Quantum-Fourier-Transform"><a href="#Quantum-Fourier-Transform" class="headerlink" title="Quantum Fourier Transform"></a>Quantum Fourier Transform</h2><p>$$<br>QFT:|x\rangle \mapsto {\frac {1}{\sqrt {N}}}\sum _{k=0}^{N-1}\omega _{n}^{xk}|k\rangle \<br>\omega _{n}=e^{\frac {2\pi i}{N}}<br>$$</p>
+<h2 id="Quantum-Phase-Estimation-Algorithm"><a href="#Quantum-Phase-Estimation-Algorithm" class="headerlink" title="Quantum Phase Estimation Algorithm"></a>Quantum Phase Estimation Algorithm</h2><p>问题：酉算子$U$有本征态$|\psi \rangle$，满足$U|\psi \rangle =e^{2\pi i\theta }\left|\psi \right\rangle ,0\leq \theta &lt;1$，估计相位$\theta$。</p>
+<p><img src="/images/PhaseCircuit-crop.png" alt=""></p>
+<p>把量子比特分成两大部分，第一寄存器存放相位估计的结果，第二寄存器用于存放待估计算子的本态。</p>
+<p>算法步骤：</p>
+<ol>
+<li><p>初始态为$|0\rangle ^{\otimes n}|1\rangle $，执行门$H^{\otimes n}$。</p>
+</li>
+<li><p>操作一系列$C-U$门，它是一种控制门。它的功能是当控制比特为1时，受控比特进行$U$门操作。<br>得到第一寄存器的量子态为：</p>
+</li>
+</ol>
+
+$$
+{\frac {1}{2^{\frac {n}{2}}}}\underbrace {\left(|0\rangle +e^{2\pi i2^{n-1}\theta }|1\rangle \right)} _{1^{st}\ qubit}\otimes \cdots \otimes \underbrace {\left(|0\rangle +e^{2\pi i2^{1}\theta }|1\rangle \right)} _{n-1^{th}\ qubit}\otimes \underbrace {\left(|0\rangle +e^{2\pi i2^{0}\theta }|1\rangle \right)} _{n^{th}\ qubit}={\frac {1}{2^{\frac {n}{2}}}}\sum _{k=0}^{2^{n}-1}e^{2\pi i\theta k}|k\rangle 
+$$
+
+<ol>
+<li>对第一寄存器进行逆QFT。<br>得到第一寄存器的量子态为：</li>
+</ol>
+
+$$
+{\frac {1}{2^{n}}}\sum _{x=0}^{2^{n}-1}\sum _{k=0}^{2^{n}-1}e^{2\pi i\theta k}e^{\frac {-2\pi ikx}{2^{n}}}|x\rangle ={\frac {1}{2^{n}}}\sum _{x=0}^{2^{n}-1}\sum _{k=0}^{2^{n}-1}e^{-{\frac {2\pi ik}{2^{n}}}\left(x-2^{n}\theta \right)}|x\rangle 
+$$
+
+<p>所有寄存器的量子态为：</p>
+
+$$
+{\frac {1}{2^{n}}}\sum _{x=0}^{2^{n}-1}\sum _{k=0}^{2^{n}-1}e^{-{\frac {2\pi ik}{2^{n}}}\left(x-2^{n}\theta \right)}|x\rangle \otimes |\psi \rangle  = {\frac {1}{2^{n}}}\sum _{x=0}^{2^{n}-1}\sum _{k=0}^{2^{n}-1}e^{-{\frac {2\pi ik}{2^{n}}}\left(x-a\right)}e^{2\pi i\delta k}|x\rangle \otimes |\psi \rangle  \\
+2^{n}\theta =a+2^{n}\delta ,\ 0\leqslant |2^{n}\delta |\leqslant {\tfrac {1}{2}}
+$$
+
+<ol>
+<li>对第一寄存器测量得到相位估计值$a$的概率为$\Pr(a)$。</li>
+</ol>
+
+$$
+\Pr(a)=\left|\left\langle a\underbrace {\left|{\frac {1}{2^{n}}}\sum _{x=0}^{2^{n}-1}\sum _{k=0}^{2^{n}-1}e^{{\frac {-2\pi ik}{2^{n}}}(x-a)}e^{2\pi i\delta k}\right|} _{\text{State of the first register}}x\right\rangle \right|^{2}={\frac {1}{2^{2n}}}\left|\sum _{k=0}^{2^{n}-1}e^{2\pi i\delta k}\right|^{2}={\begin{cases}1&\delta =0\\&\\{\frac {1}{2^{2n}}}\left|{\frac {1-{e^{2\pi i2^{n}\delta }}}{1-{e^{2\pi i\delta }}}}\right|^{2} \geq \frac{4}{\pi^2} &\delta \neq 0\end{cases}}
+$$
+
+<p>这种相位估计是近似的，要提高精度要消耗比特位。增加测量概率为$1-\epsilon$，需要比特数$O(\log(1/\epsilon )$。</p>
+<h2 id="Quantum-Counting-Algorithm"><a href="#Quantum-Counting-Algorithm" class="headerlink" title="Quantum Counting Algorithm"></a>Quantum Counting Algorithm</h2><p>问题：函数$f:{0,1}^n \to {0,1}$，问题的解集为$B$。函数是一个指示函数，满足：<br>
+$$
+f(x)={\begin{cases}1&x\in B\\0&x\notin B\end{cases}}
+$$
+<br>现在要计算解集的大小$M=|B|$。</p>
+<p><img src="/images/CountingCircuit.png" alt=""></p>
+<p>算法步骤与相位估计算法相同，不过是把待估计的算子具体化为Grover算子。是Grover算法与相位估计算法的结合。<br>由前面讨论可以知道Grover算子是一个转动矩阵，可以表示为：</p>
+
+$$
+G={\begin{bmatrix}\cos \theta &-\sin \theta \\\sin \theta &\cos \theta \end{bmatrix}}
+$$
+
+<p>它的本证值为$e^{\pm i\theta }$。</p>
+<p>$M$的估计为：</p>
+
+$$
+\sin {\frac {\theta }{2}}={\sqrt {\frac {M}{N}}} \\
+{\frac {\vert \Delta M\vert }{N}}=\left\vert \sin ^{2}\left({\frac {\theta +\Delta \theta }{2}}\right)-\sin ^{2}\left({\frac {\theta }{2}}\right)\right\vert
+$$
+
+<ul>
+<li>Quantum existence problem</li>
+</ul>
+<p>如果只关心$M$是否为0，而不关心具体值，那么较低精度的相位估计也可以接受。</p>
+<h2 id="bounded-error-quantum-polynomial-time-BQP"><a href="#bounded-error-quantum-polynomial-time-BQP" class="headerlink" title="bounded-error quantum polynomial time,BQP"></a>bounded-error quantum polynomial time,BQP</h2><p>BQP是一个很重要的量子算法复杂类，这类判断问题能够被量子计算机在多项式时间（量子门序列长度为多项式）内判断，并且正确率大于$\frac{2}{3}$。</p>
+<p>形式化语言描述：</p>
+<p>语言$L$在BQP内当且仅当存在多项式时间的量子线路${Q_n|n\in \mathbb N}$，使得满足下列条件：</p>
+<ul>
+<li>$\forall n \in \mathbb N$，量子线路输入$n$个量子比特，输出一个经典比特</li>
+<li>$\forall x \in L, \Pr(Q_{|x|}=1)\geq 2/3$</li>
+<li>$\forall x \notin L, \Pr(Q_{|x|}=0)\geq 2/3$</li>
+</ul>
+<p>理想的复杂类的包含关系（有争议的）：</p>
+<p><img src="/images/BQP_complexity_class_diagram.png" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Quantum-Algorithm/">Quantum Algorithm</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2018/04/01/Quantum-Algorithms/" data-title="Quantum Algorithms | Welcome to my world!" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/11/24/Geometric-Enclosing-Networks/"  title="Geometric Enclosing Networks">
+ <strong>下一篇：</strong><br/> 
+ <span>Geometric Enclosing Networks
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Concept"><span class="toc-number">1.</span> <span class="toc-text">Basic Concept</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Qubit"><span class="toc-number">1.1.</span> <span class="toc-text">Qubit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantum-logic-gate"><span class="toc-number">1.2.</span> <span class="toc-text">Quantum logic gate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Measure"><span class="toc-number">1.3.</span> <span class="toc-text">Measure</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Algorithm"><span class="toc-number">2.</span> <span class="toc-text">Quantum Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deutsch–Jozsa-algorithm"><span class="toc-number">3.</span> <span class="toc-text">Deutsch–Jozsa algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grover’s-Algorithm"><span class="toc-number">4.</span> <span class="toc-text">Grover’s Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Fourier-Transform"><span class="toc-number">5.</span> <span class="toc-text">Quantum Fourier Transform</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Phase-Estimation-Algorithm"><span class="toc-number">6.</span> <span class="toc-text">Quantum Phase Estimation Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quantum-Counting-Algorithm"><span class="toc-number">7.</span> <span class="toc-text">Quantum Counting Algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bounded-error-quantum-polynomial-time-BQP"><span class="toc-number">8.</span> <span class="toc-text">bounded-error quantum polynomial time,BQP</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/VB/" title="VB">VB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/VAE/" title="VAE">VAE<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IAF/" title="IAF">IAF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GEN/" title="GEN">GEN<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MMD/" title="MMD">MMD<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MC/" title="MC">MC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Importance-Sampling/" title="Importance Sampling">Importance Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MCMC/" title="MCMC">MCMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMC/" title="HMC">HMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MAP/" title="MAP">MAP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://math.nist.gov/quantum/zoo/" target="_blank" title=" All the algorithms about quantum">Quantum Zoo</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Jincheng Ye. <br/>
+			This is my blog, welcome.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/galois-39" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="JinCheng Ye">JinCheng Ye</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  </body>
+</html>

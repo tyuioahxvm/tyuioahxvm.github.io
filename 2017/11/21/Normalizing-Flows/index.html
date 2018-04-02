@@ -1,0 +1,786 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  
+    <title>Normalizing Flows | Welcome to my world!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="JinCheng Ye">
+    
+
+    
+    <meta name="description" content="NICE: NON-LINEAR INDEPENDENT COMPONENTS ESTIMATION  问题：什么是好的特征表示？（what is a good representation?）非线性的ICA问题。 回答： 好的特征表示能使数据模型更加简单（a good representation is one in which the distribution of the data is">
+<meta name="keywords" content="NICE,NF,real NVP,IAF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Normalizing Flows">
+<meta property="og:url" content="http://yoursite.com/2017/11/21/Normalizing-Flows/index.html">
+<meta property="og:site_name" content="Welcome to my world!">
+<meta property="og:description" content="NICE: NON-LINEAR INDEPENDENT COMPONENTS ESTIMATION  问题：什么是好的特征表示？（what is a good representation?）非线性的ICA问题。 回答： 好的特征表示能使数据模型更加简单（a good representation is one in which the distribution of the data is">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/Mask.png">
+<meta property="og:image" content="http://yoursite.com/images/Combinate.png">
+<meta property="og:image" content="http://yoursite.com/images/IAF.png">
+<meta property="og:updated_time" content="2018-04-02T11:56:23.431Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Normalizing Flows">
+<meta name="twitter:description" content="NICE: NON-LINEAR INDEPENDENT COMPONENTS ESTIMATION  问题：什么是好的特征表示？（what is a good representation?）非线性的ICA问题。 回答： 好的特征表示能使数据模型更加简单（a good representation is one in which the distribution of the data is">
+<meta name="twitter:image" content="http://yoursite.com/images/Mask.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/psi.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/psi.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/psi.png">
+    
+    <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/psi.png" alt="Welcome to my world!" title="Welcome to my world!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Welcome to my world!">Welcome to my world!</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/11/21/Normalizing-Flows/" title="Normalizing Flows" itemprop="url">Normalizing Flows</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
+		
+  <p class="article-time">
+    <time datetime="2017-11-21T15:02:36.000Z" itemprop="datePublished"> 发表于 2017-11-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Coupling-Layer"><span class="toc-number">1.1.</span> <span class="toc-text">Coupling Layer</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Additive-Coupling-Layer"><span class="toc-number">1.1.1.</span> <span class="toc-text">Additive Coupling Layer</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combing-Coupling-Layers"><span class="toc-number">1.2.</span> <span class="toc-text">Combing Coupling Layers</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Related-Method-NICE-DBM-VAE-GAN"><span class="toc-number">3.</span> <span class="toc-text">Related Method(NICE, DBM, VAE, GAN)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VI-NF"><span class="toc-number"></span> <span class="toc-text">VI, NF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Normalizing-Flows-NF"><span class="toc-number">1.</span> <span class="toc-text">Normalizing Flows, NF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Finite-Flows"><span class="toc-number">1.1.</span> <span class="toc-text">Finite Flows</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Infinitesimal-Flows"><span class="toc-number">1.2.</span> <span class="toc-text">Infinitesimal Flows</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lanevin-Flow"><span class="toc-number">1.2.1.</span> <span class="toc-text">Lanevin Flow</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hamiltonian-Flow"><span class="toc-number">1.2.2.</span> <span class="toc-text">Hamiltonian Flow</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function-1"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Real-NVP"><span class="toc-number"></span> <span class="toc-text">Real NVP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-1"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Masked-Convolution"><span class="toc-number">1.1.</span> <span class="toc-text">Masked Convolution</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IAF"><span class="toc-number"></span> <span class="toc-text">IAF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-2"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a></li></ol>
+		
+		</div>
+		
+		<blockquote>
+<p>NICE: NON-LINEAR INDEPENDENT COMPONENTS ESTIMATION</p>
+</blockquote>
+<p><strong>问题</strong>：什么是好的特征表示？（<strong>what is a good representation?</strong>）非线性的ICA问题。</p>
+<p><strong>回答</strong>： 好的特征表示能使数据模型更加简单（<strong>a good representation is one in which the distribution of the data is easy to model.</strong>）</p>
+<p><strong>方法</strong>： 构造相互独立信号源与可观测数据的可逆映射，与VAE，GAN模型有相似之处，主要与VAE比较。</p>
+<h2 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h2><p>信号源相互独立：<br>$$<br>p_H(h)=\prod_d p_{H_d}(h_d)<br>$$<br>假设有可逆映射$f: x \rightarrow h$，那么观察数据的分布为：<br>$$<br>p_X(x)=p_H(f(x))|\det(\frac{\partial f(x)}{\partial x})|<br>$$<br>生成模型为：<br>
+$$
+h \sim p_H(h)  \\
+x = f^{-1}(h)
+$$
+<br>目标函数设置为对数似然，那么主要问题在于雅可比矩阵的行列式计算，下面给出如何构造MLP使雅可比矩阵行列式为1。这个MLP要构造一种特殊的层结构。</p>
+<h3 id="Coupling-Layer"><a href="#Coupling-Layer" class="headerlink" title="Coupling Layer"></a>Coupling Layer</h3><p>把$X$按维度切分为两部分$X_{I_1} \in \mathbb R^d, X_{I_2} \in \mathbb R^{D-d}$，分别映射为$Y_{I_1} \in \mathbb R^d,Y_{I_2} \in \mathbb R^{D-d}$<br>
+$$
+\begin{align}
+y_{I_1}&=x_{I_1} \\
+y_{I_2}&=g(x_{I_2};m(x_{I_1}))
+\end{align}
+$$
+<br>其中$g: \mathbb R^{D-d} \times m(\mathbb R^d) \rightarrow \mathbb R^{D-d}$，那么计算雅可比矩阵的行列式简化为：<br>
+$$
+\det \frac{\partial y}{\partial x}=
+\det \begin{pmatrix}
+I_d & 0 \\ 
+\frac{\partial y_{I_2}}{\partial x_{I_1}} & \frac{\partial y_{I_2}}{\partial x_{I_2}}
+\end{pmatrix}
+$$
+<br>逆向有<br>
+$$
+\begin{align}
+x_{I_1}&=y_{I_1} \\
+x_{I_2}&=g^{-1}(y_{I_2};m(y_{I_1}))
+\end{align}
+$$
+</p>
+<h4 id="Additive-Coupling-Layer"><a href="#Additive-Coupling-Layer" class="headerlink" title="Additive Coupling Layer"></a>Additive Coupling Layer</h4><p>特殊地，如果取$g(a;b)=a+b$，有：<br>
+$$
+\begin{align}
+x_{I_1}&=y_{I_1} \\
+x_{I_2}&=y_{I_2}-m(y_{I_1}）
+\end{align}
+$$
+<br>使简化雅可比矩阵的行列式为1：<br>
+$$
+\det \frac{\partial y}{\partial x}=
+\det \begin{pmatrix}
+I_d & 0 \\ 
+\frac{\partial y_{I_2}}{\partial x_{I_1}} & I_{D-d}
+\end{pmatrix}
+= 1
+$$
+<br>如果行列式为1，那么表明映射使保体积不变的，为了避免这种约束，添加缩放因子（有筛选隐变量的作用）。<br>$$<br>x_i \rightarrow S_{ii}x_i<br>$$<br>这样行列式值为：<br>$$<br>\det \frac{\partial y}{\partial x}=<br>\prod_i S_{ii}<br>$$</p>
+<h3 id="Combing-Coupling-Layers"><a href="#Combing-Coupling-Layers" class="headerlink" title="Combing Coupling Layers"></a>Combing Coupling Layers</h3><p>叠层增加表达能力。<br>
+$$
+\begin{align}
+h_{I_1}^{(1)} &= x_{I_1} \\
+h_{I_2}^{(1)} &= x_{I_2}+m^{(1)}(x_{I_1}) \\
+h_{I_2}^{(2)} &= h_{I_2}^{(1)} \\
+h_{I_1}^{(2)} &= h_{I_1}^{(1)}+m^{(2)}(x_{I_2}) \\
+h_{I_1}^{(3)} &= h_{I_1}^{(2)} \\
+h_{I_2}^{(3)} &= h_{I_2}^{(2)}+m^{(3)}(x_{I_1}) \\
+h_{I_2}^{(4)} &= h_{I_2}^{(3)} \\
+h_{I_1}^{(4)} &= h_{I_1}^{(3)}+m^{(4)}(x_{I_2}) \\
+h &= exp(s)\odot h^{(4)}
+\end{align}
+$$
+</p>
+<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>取最大似然作为优化目标：<br>
+$$
+\begin{align}
+\log p_X(x) &= \sum_i \log p_{H_d}(f_d(x))+\log |\det(\frac{\partial f(x)}{\partial x})| \\
+&= \sum_i [\log p_{H_d}(f_d(x))+\log |S_{ii}|]
+\end{align}
+$$
+<br>其中信号源的先验可以取高斯或者logistic分布，取logistic分布在梯度下降方法有更好的表现。</p>
+<ul>
+<li><p>高斯分布<br>$$<br>\log p_{H_d}=-(h_d^2+\log(2\pi))/2<br>$$</p>
+</li>
+<li><p>logistic分布<br>$$<br>\log p_{H_d}=-\log(1+\exp(h_d))-\log(1+\exp(-h_d))<br>$$</p>
+</li>
+</ul>
+<h2 id="Related-Method-NICE-DBM-VAE-GAN"><a href="#Related-Method-NICE-DBM-VAE-GAN" class="headerlink" title="Related Method(NICE, DBM, VAE, GAN)"></a>Related Method(NICE, DBM, VAE, GAN)</h2><ul>
+<li><p>DBM</p>
+<p>对数似然难以计算，求解过程梯度运算需要MCMC，耗时一般较长。</p>
+</li>
+<li><p>VAE</p>
+<p>使用随机编码器与不完美的解码器，使用ELBO而不是直接优化最大对数似然，这样优化结果可能不是最好的。VAE与DBM都是观测变量在给定隐变量下独立。</p>
+</li>
+<li><p>NICE</p>
+<p>使用VAE的基本思想，但是使用确定编码器取代随机编码器。</p>
+</li>
+</ul>
+<h1 id="VI-NF"><a href="#VI-NF" class="headerlink" title="VI, NF"></a>VI, NF</h1><blockquote>
+<p>Variational Inference with Normalizing Flows</p>
+</blockquote>
+<p><strong>问题</strong>：如何改进变分推断？</p>
+<p><strong>方法</strong>：变分推断的一个中心问题就是如何估计后验，在传统的方法中一般使用指数族分布，平均场近似等方法，这样做对变分函数有很大的限制，甚至很难与正确的后验吻合。在这里使用Normalizing Flow的方法使得变分函数具有更强的表达能力与灵活性。</p>
+<h2 id="Normalizing-Flows-NF"><a href="#Normalizing-Flows-NF" class="headerlink" title="Normalizing Flows, NF"></a>Normalizing Flows, NF</h2><h3 id="Finite-Flows"><a href="#Finite-Flows" class="headerlink" title="Finite Flows"></a>Finite Flows</h3><p>假设$f:\mathbb R^d \to \mathbb R^d$是可逆映射，$g=f^{-1},z’=f(z)$</p>
+<p>$$<br>q(z’)=q(z)|\det \frac{\partial g}{\partial z’}|=q(z)|\det \frac{\partial f}{\partial z}|^{-1}<br>$$</p>
+<p>通过上面的变换，我们可以由一个分布转换成另外一个分布。如果多次重复上述的变换，可以得到一个分布序列。雅可比行列式可以认为是链式法则。如果把分布想象为一堆粒子，那么可以形象地这一转化过程想象为流。<br>
+$$
+\begin{align}
+z_K &= f_K \circ ...  \circ f_2 \circ f_1(z_0) \\
+\log q_K(z_K) &= \log q_0(z_0)-\sum_{k=1}^K \log |\det \frac{\partial f_k}{\partial z_k}|
+\end{align}
+$$
+<br><strong>一个有用的性质</strong>： </p>
+<p>计算流的最终分布的期望可以不用计算雅可比矩阵。</p>
+<p>$$<br>\mathbb E_{q_K}[h(z_K)]=\mathbb E_{q_0}[h(f_K \circ …  \circ f_2 \circ f_1(z_0))]<br>$$</p>
+<p>下面具体化映射函数，以及计算雅可比行列式<br>
+$$
+\begin{align}
+f(z) &= z+uh(w^Tz+b) \\
+\psi(z) &= h'(w^Tz+b)w \\
+|\det \frac{\partial f(z)}{\partial z}| &= |\det (\mathbb I+u\psi(z)^T)| = |1+u^T\psi(z)|
+\end{align}
+$$
+<br>上面的第三条式子式是关键，它表明了特殊形式的变换（称为，Invertible Linear-time Transformation）在计算雅可比行列式上可以有简单的结果。第一条式子形式上比较像残差网络中每一层的变换。<br>
+$$
+\begin{align}
+z_K &= f_K \circ ...  \circ f_2 \circ f_1(z_0) \\
+\log q_K(z_K) &= \log q_0(z_0)-\sum_{k=1}^K \log |1+u_k^T\psi_k(z_k)|
+\end{align}
+$$
+<br><strong>可逆充分条件</strong> ：并非所以上述形式的映射都是可逆的，要可逆的充分条件是$w^Tu \geq -1$。</p>
+<p>证明：</p>
+<p>把变量$z$分为平行与垂直于$w$的两部分，即$z=z_{\perp}+z_{|}$，令$h(x)=\tanh(x)$</p>
+<p>$$<br>f(z) = z_{\perp}+z_{|}+uh(w^Tz_{|}+b)<br>$$<br>
+$$
+\begin{cases}
+z_{\|}=\alpha \frac{w}{\| w\|^2} \\
+z_{\perp}=y-z_{\|}-uh(w^Tz_{\|}+b)
+\end{cases}
+$$
+<br>$\alpha$参数要满足下面条件，</p>
+<p>$$<br>w^Tf(z)=\alpha+w^Tuh(\alpha+b)<br>$$</p>
+<p>上式如果关于$\alpha$单调，那么能够推出映射可逆</p>
+<p>$$<br>w^Tu \geq -\frac{1}{h’(\alpha+b)} \geq -1<br>$$</p>
+<p>更特殊地，可以令<br>
+$$
+\widehat{u}=u+(m(w^Tu)-w^Tu)\frac{w}{\| w\|^2} \\
+m(x)=-1+\log(1+\exp(x))
+$$
+</p>
+<h3 id="Infinitesimal-Flows"><a href="#Infinitesimal-Flows" class="headerlink" title="Infinitesimal Flows"></a>Infinitesimal Flows</h3><p>与有限流不同，无限流要经过无限次变换。变换过程由偏微分方程描述。</p>
+<p>$$<br>\frac{\partial q_t(z)}{\partial t}=\mathcal T_t[q_t(z)]<br>$$</p>
+<h4 id="Lanevin-Flow"><a href="#Lanevin-Flow" class="headerlink" title="Lanevin Flow"></a>Lanevin Flow</h4><p>粒子运动由随机微分方程（SDE）描述<br>
+$$
+dz(t)=F(z(t),t)dt+G(z(t),t)d\xi(t) \\
+\mathbb E[\xi(t)]=0 \\
+\mathbb E[\xi_i(t)\xi_j(t')]=\delta_{ij}\delta(t-t')
+$$
+<br>如果起始的粒子概率分布为$q_0(z)$，经过SDE方程后，概率$q_t(z)$由Fokker-Planck equation描述</p>
+<p>$$<br>\frac{\partial q_t(z)}{\partial t}=-\sum_i \frac{\partial}{\partial z_i}[F_i(z,t)q_t(z)]+1/2\sum_{ij}\frac{\partial^2}{\partial z_i \partial z_j}[D_{ij}(z,t)q_t(z)] \<br>D=GG^T<br>$$</p>
+<p>在机器学习领域，可以使用$F(z,t)=-\nabla_z \mathcal L(z), G(z,t)=\sqrt(2)\delta_{ij}$，$\mathcal L=\log p(z)$</p>
+<p>最终的稳定概率分布为吉布斯分布</p>
+<p>$$<br>q_{\infty}(z)\propto \exp(-\mathcal L)<br>$$</p>
+<h4 id="Hamiltonian-Flow"><a href="#Hamiltonian-Flow" class="headerlink" title="Hamiltonian Flow"></a>Hamiltonian Flow</h4><p>Hamiltonian MC在广义坐标$(z,w)$下可以视为NF</p>
+<p>动力学方程</p>
+<p>$$<br>H(z,w)=-\mathcal L(z)+1/2w^TMw<br>$$</p>
+<h2 id="Loss-Function-1"><a href="#Loss-Function-1" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>有了上面的等式可以计算VI中最常用的损失函数，ELBO<br>
+$$
+\begin{align}
+\mathcal L &= \mathbb E_{q_{\phi}(z|x)}[\log q_{\phi}(z|x)-\log p(x,z)] \\
+&= \mathbb E_{q_0(z_0)}[\log q_0(z_0)-\log p(x,z_K)-\sum_{k=1}^K \log |1+u_k^T\psi_k(z_k)|] \\
+\end{align}
+$$
+</p>
+<h1 id="Real-NVP"><a href="#Real-NVP" class="headerlink" title="Real NVP"></a>Real NVP</h1><blockquote>
+<p>DENSITY ESTIMATION USING REAL NVP</p>
+</blockquote>
+<p><strong>一句话</strong>：NICE工作的基础上，构造可逆映射。（偏工程）</p>
+<p>real-valued non-volume preserving (real NVP) </p>
+<h2 id="Model-1"><a href="#Model-1" class="headerlink" title="Model"></a>Model</h2><p>可逆映射为：<br>
+$$
+\begin{cases}
+y_{I_1}=x_{I_1} \\
+y_{I_2}=x_{I_2}\odot \exp(s(x_{I_1}))+t(x_{I_1})
+\end{cases}
+$$
+
+$$
+\begin{cases}
+x_{I_1}=y_{I_1} \\
+x_{I_2}=(y_{I_2}-t(y_{I_1}))\odot \exp(-s(y_{I_1}))
+\end{cases}
+$$
+<br>雅可比行列式：<br>
+$$
+\det(\frac{\partial y}{\partial x})= \det(\begin{pmatrix}
+I_d & 0 \\ 
+\frac{\partial y_{I_2}}{\partial x_{I_1}} & diag(\exp(s(x_{I_1})))
+\end{pmatrix})
+$$
+</p>
+<h3 id="Masked-Convolution"><a href="#Masked-Convolution" class="headerlink" title="Masked Convolution"></a>Masked Convolution</h3><p>b是二值掩膜，可逆映射可以写为下面形式</p>
+<p>$$<br>y = b\odot x + (1-b)\odot(x\odot \exp(s(b\odot x))+t(b\odot x))<br>$$</p>
+<p><img src="/images\Mask.png" alt=""></p>
+<p><img src="/images\Combinate.png" alt=""></p>
+<h1 id="IAF"><a href="#IAF" class="headerlink" title="IAF"></a>IAF</h1><blockquote>
+<p>Improved Variational Inference with Inverse Autoregressive Flow</p>
+</blockquote>
+<p><strong>一句话</strong>：把可逆映射运用到变分推断中。</p>
+<p>具体来说，就是对变分函数进一步具体构造（一个可逆映射），使其具有更强的逼近真实函数（后验概率）的能力。可以认为是NF的特例，工程上比一般的NF更易于实现？</p>
+<h2 id="Model-2"><a href="#Model-2" class="headerlink" title="Model"></a>Model</h2><p>可逆映射为：<br>
+$$
+z_0 = \mu_0 + \sigma_0 \odot \epsilon, \epsilon\sim \mathcal N(0,\mathbb I) \\
+z_t = \mu_t + \sigma_t \odot z_{t-1}
+$$
+<br>雅可比行列式：</p>
+<p>$$<br>\det(\frac{dz_t}{dz_{t-1}})=\prod_{i=1}^D \sigma_{t,i}<br>$$</p>
+<p>流终端的概率分布为：</p>
+<p>$$<br>\log q(z_T|x)=-\sum_{i=1}^D(\epsilon_i^2/2+\log(2\pi)/2+\sum_{t=0}^T \log \sigma_{t,i})<br>$$</p>
+<p>上面的式子可以用于VAE的变分部分。</p>
+<p><img src="/images\IAF.png" alt=""></p>
+<p>AutoregressiveNN使用了类似LSTM的方法<br>
+$$
+[m_t,s_t]=AutoregressiveNN_t[z_t,h;\theta] \\
+\begin{cases}
+\sigma_t = sigmoid(s_t) \\
+z_t = \sigma_t\odot z_{t-1}+(1-\sigma_t)\odot m_t
+\end{cases}
+$$
+</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/NICE/">NICE</a><a href="/tags/NF/">NF</a><a href="/tags/real-NVP/">real NVP</a><a href="/tags/IAF/">IAF</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2017/11/21/Normalizing-Flows/" data-title="Normalizing Flows | Welcome to my world!" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/11/24/PNL-VB/" title="PNL, ICA, VB">
+  <strong>上一篇：</strong><br/>
+  <span>
+  PNL, ICA, VB</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/11/21/Variational-Autoencoder/"  title="Variational Autoencoder">
+ <strong>下一篇：</strong><br/> 
+ <span>Variational Autoencoder
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Coupling-Layer"><span class="toc-number">1.1.</span> <span class="toc-text">Coupling Layer</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Additive-Coupling-Layer"><span class="toc-number">1.1.1.</span> <span class="toc-text">Additive Coupling Layer</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combing-Coupling-Layers"><span class="toc-number">1.2.</span> <span class="toc-text">Combing Coupling Layers</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Related-Method-NICE-DBM-VAE-GAN"><span class="toc-number">3.</span> <span class="toc-text">Related Method(NICE, DBM, VAE, GAN)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VI-NF"><span class="toc-number"></span> <span class="toc-text">VI, NF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Normalizing-Flows-NF"><span class="toc-number">1.</span> <span class="toc-text">Normalizing Flows, NF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Finite-Flows"><span class="toc-number">1.1.</span> <span class="toc-text">Finite Flows</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Infinitesimal-Flows"><span class="toc-number">1.2.</span> <span class="toc-text">Infinitesimal Flows</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lanevin-Flow"><span class="toc-number">1.2.1.</span> <span class="toc-text">Lanevin Flow</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hamiltonian-Flow"><span class="toc-number">1.2.2.</span> <span class="toc-text">Hamiltonian Flow</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function-1"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Real-NVP"><span class="toc-number"></span> <span class="toc-text">Real NVP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-1"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Masked-Convolution"><span class="toc-number">1.1.</span> <span class="toc-text">Masked Convolution</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IAF"><span class="toc-number"></span> <span class="toc-text">IAF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-2"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/VB/" title="VB">VB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/VAE/" title="VAE">VAE<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IAF/" title="IAF">IAF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GEN/" title="GEN">GEN<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MMD/" title="MMD">MMD<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MC/" title="MC">MC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Importance-Sampling/" title="Importance Sampling">Importance Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MCMC/" title="MCMC">MCMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMC/" title="HMC">HMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MAP/" title="MAP">MAP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://math.nist.gov/quantum/zoo/" target="_blank" title=" All the algorithms about quantum">Quantum Zoo</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Jincheng Ye. <br/>
+			This is my blog, welcome.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/galois-39" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="JinCheng Ye">JinCheng Ye</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  </body>
+</html>

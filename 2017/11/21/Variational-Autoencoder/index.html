@@ -1,0 +1,661 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  
+    <title>Variational Autoencoder | Welcome to my world!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="JinCheng Ye">
+    
+
+    
+    <meta name="description" content="简介概率模型的问题主要是求解后验或者似然，隐变量的存在使得表达式有可能变得异常复杂。很多时候，后验往往没有解析表达式，或者难以计算。这样使得近似估计成为必不可少的工具。除了可以使用抽样算法（一般有MCMC，重要性抽样算法等）做估计以外，还可以使用近似推理的方法。近似推理的核心思想是使用一个较为方便计算的分布去逼近未知的后验或者似然，这里涉及泛函的运算。不过实际上再求泛函极值的时候并非使用一般数学意">
+<meta name="keywords" content="VB,VAE,MAP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Variational Autoencoder">
+<meta property="og:url" content="http://yoursite.com/2017/11/21/Variational-Autoencoder/index.html">
+<meta property="og:site_name" content="Welcome to my world!">
+<meta property="og:description" content="简介概率模型的问题主要是求解后验或者似然，隐变量的存在使得表达式有可能变得异常复杂。很多时候，后验往往没有解析表达式，或者难以计算。这样使得近似估计成为必不可少的工具。除了可以使用抽样算法（一般有MCMC，重要性抽样算法等）做估计以外，还可以使用近似推理的方法。近似推理的核心思想是使用一个较为方便计算的分布去逼近未知的后验或者似然，这里涉及泛函的运算。不过实际上再求泛函极值的时候并非使用一般数学意">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/ae.jpg">
+<meta property="og:updated_time" content="2018-04-02T11:58:40.228Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Variational Autoencoder">
+<meta name="twitter:description" content="简介概率模型的问题主要是求解后验或者似然，隐变量的存在使得表达式有可能变得异常复杂。很多时候，后验往往没有解析表达式，或者难以计算。这样使得近似估计成为必不可少的工具。除了可以使用抽样算法（一般有MCMC，重要性抽样算法等）做估计以外，还可以使用近似推理的方法。近似推理的核心思想是使用一个较为方便计算的分布去逼近未知的后验或者似然，这里涉及泛函的运算。不过实际上再求泛函极值的时候并非使用一般数学意">
+<meta name="twitter:image" content="http://yoursite.com/images/ae.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/psi.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/psi.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/psi.png">
+    
+    <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/psi.png" alt="Welcome to my world!" title="Welcome to my world!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Welcome to my world!">Welcome to my world!</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/11/21/Variational-Autoencoder/" title="Variational Autoencoder" itemprop="url">Variational Autoencoder</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
+		
+  <p class="article-time">
+    <time datetime="2017-11-21T01:26:18.000Z" itemprop="datePublished"> 发表于 2017-11-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变分法简介"><span class="toc-number">2.</span> <span class="toc-text">变分法简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自动编码机"><span class="toc-number">3.</span> <span class="toc-text">自动编码机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变分推理"><span class="toc-number">4.</span> <span class="toc-text">变分推理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平均场近似"><span class="toc-number">5.</span> <span class="toc-text">平均场近似</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些相关的文章"><span class="toc-number">6.</span> <span class="toc-text">一些相关的文章</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>概率模型的问题主要是求解后验或者似然，隐变量的存在使得表达式有可能变得异常复杂。很多时候，后验往往没有解析表达式，或者难以计算。这样使得近似估计成为必不可少的工具。<br>除了可以使用抽样算法（一般有MCMC，重要性抽样算法等）做估计以外，还可以使用近似推理的方法。<br>近似推理的核心思想是使用一个较为方便计算的分布去逼近未知的后验或者似然，这里涉及泛函的运算。不过实际上再求泛函极值的时候并非使用一般数学意义的函数空间，而是使用带参数的分布空间，所以问题退化为一般的优化问题。<br>在深度学习引入后，一般使用深度神经网络来表示这个参数分布。</p>
+<h2 id="变分法简介"><a href="#变分法简介" class="headerlink" title="变分法简介"></a>变分法简介</h2><blockquote>
+<p>变分法是处理泛函的数学领域，和处理函数的普通微积分相对。譬如，这样的泛函可以通过未知函数的积分和它的导数来构造。变分法最终寻求的是极值函数：它们使得泛函取得极大或极小值。<br>变分法的关键定理是欧拉－拉格朗日方程。它对应于泛函的临界点。在寻找函数的极大和极小值时，在一个解附近的微小变化的分析给出一阶的一个近似。它不能分辨是找到了最大值或者最小值（或者都不是）。<br>变分法在理论物理中非常重要：在拉格朗日力学中，以及在最小作用量原理在量子力学的应用中。变分法提供了有限元方法的数学基础，它是求解边界值问题的强力工具。它们也在材料学中研究材料平衡中大量使用。而在纯数学中的例子有，黎曼在调和函数中使用狄利克雷原理。<br>同样的材料可以出现在不同的标题中，例如希尔伯特空间技术，莫尔斯理论，或者辛几何。变分一词用于所有极值泛函问题。微分几何中的测地线的研究是很显然的变分性质的领域。极小曲面（肥皂泡）上也有很多研究工作，称为普拉托问题。<br>来自维基百科</p>
+</blockquote>
+<p>在一般情形下，则需考虑以下的计算式：</p>
+<p>$$<br>A[f]=\int_{x_{1}}^{x_{2}}L(x,f,f’)dx<br>$$</p>
+<p>其中f需有二阶连续的导函数。在这种情形下，拉格朗日量L在极值$f_{0}$处满足欧拉-拉格朗日方程：</p>
+<p>$$<br>\frac{d}{dx}{\frac{\partial L}{\partial f’}}+{\frac{\partial L}{\partial f}}=0<br>$$</p>
+<p>不过在此处，欧拉-拉格朗日方程只是有极值的必要条件，并不是充分条件。</p>
+<h2 id="自动编码机"><a href="#自动编码机" class="headerlink" title="自动编码机"></a>自动编码机</h2><p>自动编码机主要包括编码器和译码器两部分，一般地编码器和译码器都是神经网络，可以是MLP，CNN，RNN等。</p>
+<p><img src="/images/ae.jpg" alt="AE"></p>
+<p>上图给出的就是以卷积神经网络为基础的自动编码机。编码机的目标函数可以为最小均方差MSE，交叉熵或者KL散度等等。其目标是提取自动学习数据特征，得到低维的隐变量（有降维的功能），并且能够重构回原来的数据。它是一种重要的无监督方法，受限玻尔兹曼机是其中著名的一种。<br>keras在github的博客上有关于各种编码机的简介与实现<a href="https://blog.keras.io/building-autoencoders-in-keras.html" target="_blank" rel="noopener">1</a> 。</p>
+<h2 id="变分推理"><a href="#变分推理" class="headerlink" title="变分推理"></a>变分推理</h2><p>简单地，考虑一个没有带隐变量的分布$p(x)$，则它的的熵为：</p>
+<p>$$<br>H[p]=\int p(x)\ln p(x)dx<br>$$</p>
+<p>如果以熵为目标函数，那么变分推理可以用到最大熵的方法中去。这在统计物理中最为常见，信息论中也有出现。<br>如果现在把隐变量$Z$加上，那么</p>
+<p>$$<br>\ln p(X)=\mathcal L(q)+KL[q||p]<br>$$</p>
+<p>其中</p>
+<p>$$<br>\mathcal L(q)=\int q(Z)\ln \frac{p(X,Z)}{q(Z)}dZ<br>$$</p>
+<p>$$<br>KL(q||p)=\int q(Z) \frac{q(Z)}{q(Z|X)}dZ<br>$$</p>
+<p>其中的 $q(Z)$ 就是我们要设计的分布，与EM算法不同，这里没有显式出现参数，因为它被吸收到我们要设计的分布 $q(Z)$ 中去了。<br>因为$KL(q||p)\ge0$ ，所以称$\cal L(q)$为$\ln p(X)$的下界,一般我们的任务就是最大化这个下界以达到最大似然的目的。虽然没有直接最大化似然，但是数学上可以证明，极值点处下界与似然重合。不过实际优化一般不可能达到这个极值点，但是这不妨碍它成为实际应用的强大工具。</p>
+<h2 id="平均场近似"><a href="#平均场近似" class="headerlink" title="平均场近似"></a>平均场近似</h2><p>平均场假设就是多粒子体系中，把体系分成独立的部分，各个部分的相互作用简化为这个部分与它们所有平均得到的场的相互作用。这里是假设隐变量多个变量之间相互独立，可以写成下面的式子：</p>
+<p>$$<br>p(Z)=\prod_{i} p(Z_i)<br>$$</p>
+<p>平均场近似是处理多体物理的重要工具，例如超导理论。不过最近物理学家发现强关联的体系这种方法可能失效。不过我们不关心这个，平均场近似可以使问题化简，剩下的就是相信深度网络可以很好地逼近我们想要的假设。</p>
+<h2 id="一些相关的文章"><a href="#一些相关的文章" class="headerlink" title="一些相关的文章"></a>一些相关的文章</h2><p><a href="https://arxiv.org/abs/1312.6114" target="_blank" rel="noopener">Auto-Encoding Variational Bayes</a><br>VAE的结构如下图所示</p>
+<p>可以看到其结构与AE很相似，它的隐变量部分假设为独立的高斯分布。<br>这里一个重要的亮点就是隐变量的抽样部分，与玻尔兹曼机不同，并不需要MCMC，直接高斯分布采样，但是为了满足均值 $\mu$和方差$\sigma^2$的可导性，使用了$Z=\mu+\sigma^2*\epsilon$。要注意的是和图中的z_log_var不同，下面的推导会给出原因。</p>
+<p>首先给出对数似然和下界：</p>
+<p>$$<br>\ln p_{\theta}(x^{(1)},…,x^{(N)})=\sum_{i=1}^{N}\ln p_{\theta}(x^{(i)})<br>$$</p>
+<p>$$<br>\ln p_{\theta}(x^{(i)})=KL(q_{\phi}(z|x^{(i)})||p_{\theta}(z|x^{(i)}))+{\cal L}(\theta,\phi;x^{(i)})<br>$$</p>
+<p>$$<br>{\cal L}(\theta,\phi;x^{(i)})=\int q_{\phi}(z|x^{(i)})\ln \frac{p_{\theta}(x^{(i)},z)}{q_{\phi}(z|x^{(i)})}dz<br>$$</p>
+<p>这里与变分推理的基本分解方法相同，就等着优化下界$\cal L$。<br>把下界再分解为两部分，简化起见$x^{(i)}\to x$</p>
+<p>$$<br>{\cal L}(\theta,\phi;x)=\mathbb{E}_{q_{\phi}(z|x)}[-\ln q_{\phi}(z|x)+\ln p_{\theta}(x,z)]<br>$$</p>
+<p>再次重写为：</p>
+<p>$$<br>{\cal L}(\theta,\phi;x)=-KL(q_{\phi}(z|x)||p_{\theta}(z))+\mathbb{E}_{q_{\phi}(z|x)}[\ln p_{\theta}(x|z)]<br>$$</p>
+<p>到这里已经得到目标函数的解析形式，剩下的就是积分简化和抽样估计。注意到$q_{\phi}(z|x)$和$p_{\theta}(x|z)$分别就是编码器与译码器，它们都用神经网络来设计，$\phi$是变分参数而$\theta$是生成参数。<br>KL散度在隐变量为独立高斯分布时可以化简<br>
+$$
+\begin{aligned}
+\int q_{\phi}(z)\ln p(z)dz&=\int{\cal N}(z;\mu,\sigma^2)\ln {\cal N}(z;0,\mathbb{I}) \\
+&=-\frac{J}{2}\ln(2\pi)-\frac{1}{2}\sum_{j=1}^{J}(\mu_j^2+\sigma_j^2)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\int q_{\phi}(z)\ln q_{\phi}(z)dz&=\int {\cal N}(z;\mu,\sigma^2)\ln {\cal N}(z;\mu,\sigma^2)dz \\
+&=-\frac{J}{2}\ln(2\pi)-\frac{1}{2}\sum_{j=1}^{J}(1+\ln\sigma_j^2)
+\end{aligned}
+$$
+<br>有了上面的式子就可以得到KL散度的表达式：</p>
+<p>$$<br>{-KL(q_{\phi}(z)||p_{\theta}(z))=\frac{1}{2}\sum_{j=1}^{J}(1+\ln\sigma_j^2-\mu_j^2-\sigma_j^2)}<br>$$</p>
+<p>在这里可以介绍上文结果图中z_log_var出现的原因了,因为直接用神经网络来学习$\ln\sigma^2$ 然后$\sigma^2=\exp(\ln \sigma^2)$比较方便，$\exp()$比$\ln()$要好。<br>第二部分可以写为：</p>
+<p>$$<br>\mathbb{E}_{q_{\phi}(z)}[p_{\theta}(x|z)]\approx\frac{1}{L}\sum_{l=1}^{L}p_{\theta}(x|z^{(l)})<br>$$</p>
+<p>$$<br>z^{(l)}\sim q_{\phi}(z|x)<br>$$</p>
+<p>综合上面的式子可以得到下界的估计，把$x\to x^{(i)}$换回来</p>
+<p>$$<br>{\cal L}(\theta,\phi;x^{(i)})=\frac{1}{2}\sum_{j=1}^{J}(1+\ln\sigma_j^{(i)2}-\mu_j^{(i)2}-\sigma_j^{(i)2})+\frac{1}{L}\sum_{l=1}^{L}p_{\theta}(x^{(i)}|z^{(i,l)})<br>$$</p>
+<p>有了目标函数，只要对其做导数就可以Update参数了。<br>注意MC取样对$\phi$的梯度估计为：</p>
+<p>$$<br>\nabla_{\phi}\mathbb{E}_{q_{\phi}(z)}[f(z)]=\mathbb{E}_{q_{\phi}(z)}[f(z)\nabla_{\phi}\ln q_{\phi}(z)]\approx\frac{1}{L}\sum_{l=1}^{L}f(z^{(l)})\nabla_{\phi}\ln q_{\phi}(z^{(l)})<br>$$</p>
+<p>$$<br>z^{(l)}\sim q_{\phi}(z|x)<br>$$</p>
+<p><a href="https://link.springer.com/article/10.1007/s10462-011-9236-8" target="_blank" rel="noopener">A Tutorial on Variational Bayesian Inference</a>  <em>tedious</em><br>这篇文章主要推导了平均场下的变分推理和Variational Message Passing(VMP)框架的简单介绍。<br>遵循文章中的记号，推导平均场下的变分推理。<br>$D$是数据或者可视变量，$x$是隐变量，$Q(x)$是近视分布，$\theta$是参数。</p>
+<p>$$<br>Q(x)=\prod_iQ_i(x_i)<br>$$</p>
+<p>$$<br>\forall i,\int dx_iQ_i(x_i)=1<br>$$</p>
+<p>$Q(x)$要逼近$P(x|D)$，给出$KL$散度：</p>
+<p>$$<br>KL(Q(x)||P(x|D))=\int dxQ(x)\ln\frac{Q(x)}{P(x|D)}<br>$$</p>
+<p>与变分推理的基本分解相同，得到表达式：</p>
+<p>$$<br>P(D)=L[Q(x)]+KL(Q(x)||P(x|D))<br>$$</p>
+<p>$$<br>L[Q(x)]=\int dxQ(x)\ln\frac{P(x,D)}{Q(x)}<br>$$<br>接下来分解$L[Q(x)]$<br>
+$$
+\begin{aligned}
+L[Q(x)] &=\int dxQ(x)\ln\frac{P(x,D)}{Q(x)} \\
+&=\int dxQ(x)\ln P(x,D)-\int dxQ(x)\ln Q(x) \\
+&=\langle E(x,D)\rangle_{Q(x)}+H[Q(x)] \\
+\end{aligned}
+$$
+<br>这里分成了能量和熵两部分，物理上能量更喜欢用$P\propto\exp(-\frac{E}{T})$，带符号。<br>加入平均场假设，熵化简为：<br>$$<br>H[Q(x)]=\sum_i\int dx_iQ_i(x_i)\ln Q_i(x_i)<br>$$<br>能量部分写为,$Z$是配分函数，是常数：<br>
+$$
+\begin{aligned}
+\langle E(x,D)\rangle_{Q(x)}&=\int dx_i Q_i(x_i)\langle E(x,D)\rangle{Q(\bar x_i)} \\
+&=\int dx_iQ_i(x_i)\ln Q_i^*(x_i)+\ln Z
+\end{aligned}
+$$
+<br>$$<br>Q_i^{\star}(x_i)=\frac{1}{Z}\exp(\langle E(x,D)\rangle_{Q(\bar x_i)}),{x_i,\bar x_i}<br>$$</p>
+<p>合并后得到</p>
+<p>$$<br>L[Q(x)]=-KL(Q_i(x_i)||Q_i^*(x_i))+H[Q_i(\bar x_i)]+\ln Z<br>$$</p>
+<p>变分求导得到：</p>
+<p>$$<br>\frac{\delta}{\delta Q_i(x_i)}{-KL(Q_i(x_i)||Q_i^*(x_i))-\lambda_i(\int Q_i(x_i)dx_i)-1}=0<br>$$</p>
+<p>得到极值条件：</p>
+<p>$$<br>Q_i(x_i)=Q_i^{\star}(x_i)<br>$$</p>
+<p>$$<br>Q_i(x_i)=\frac{1}{Z}\exp(\langle E(x,D)\rangle_{Q(\bar x_i)})<br>$$</p>
+<p>观察上面式子的形式可以得到一个马尔科夫链($\bar x_i \rightarrow x_i \rightarrow \bar x_i^* \rightarrow …$)，这种坐标迭代的方法与Gibbs采样算法有很强的联系。</p>
+<p><a href="http://www.jmlr.org/papers/volume6/winn05a/winn05a.pdf" target="_blank" rel="noopener">Variational Message Passing</a><br>VMP最终目标就是要把人们从冗余的推导中解放出来，使用了信息传递模型，信息分为两类，一种是natural parameter vector（子节点到父节点）和vector of moment（父节点到子节点）。以指数族分布作为信息传递，这个很重要，因为指数族分布可以使用共轭分布的重要特征（先验分布与后验分布同是指数族分布）。<br>$$<br>P(X)=\prod_i P(X_i|{Pa}_i)<br>$$<br>这个是贝叶斯网络的一个重要公式，联合分布总是可以分解为子节点与父节点条件概率的乘积。</p>
+<p>回到平均场近似讨论的部分</p>
+<p>$$<br>Q_i^{\star}(x_i)=\frac{1}{Z}\exp(\langle E(x,D)\rangle_{Q(\bar x_i)})<br>$$</p>
+
+
+$$
+\begin{aligned}
+\ln Q_i^{\star}(x_i)&={\langle\ln P(x,D)\rangle}_{Q(\bar x_i)}+const \\
+&={\langle\sum_k\ln P(D_k|{Pa}_k)\rangle}_{Q(\bar x_i)}+const \\
+&={\langle\ln P(x_i|{Pa}_i)\rangle}_{Q(\bar x_i)}+\sum_{k\in {Ch}_i}{\langle\ln P(D_k|{Pa}_k)\rangle}_{Q(\bar x_i)}+const
+\end{aligned}
+$$
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/VB/">VB</a><a href="/tags/VAE/">VAE</a><a href="/tags/MAP/">MAP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2017/11/21/Variational-Autoencoder/" data-title="Variational Autoencoder | Welcome to my world!" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/11/21/Normalizing-Flows/" title="Normalizing Flows">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Normalizing Flows</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/11/21/Sampling/"  title="Sampling">
+ <strong>下一篇：</strong><br/> 
+ <span>Sampling
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变分法简介"><span class="toc-number">2.</span> <span class="toc-text">变分法简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自动编码机"><span class="toc-number">3.</span> <span class="toc-text">自动编码机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变分推理"><span class="toc-number">4.</span> <span class="toc-text">变分推理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平均场近似"><span class="toc-number">5.</span> <span class="toc-text">平均场近似</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些相关的文章"><span class="toc-number">6.</span> <span class="toc-text">一些相关的文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/VB/" title="VB">VB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/VAE/" title="VAE">VAE<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IAF/" title="IAF">IAF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GEN/" title="GEN">GEN<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MMD/" title="MMD">MMD<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MC/" title="MC">MC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Importance-Sampling/" title="Importance Sampling">Importance Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MCMC/" title="MCMC">MCMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMC/" title="HMC">HMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MAP/" title="MAP">MAP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://math.nist.gov/quantum/zoo/" target="_blank" title=" All the algorithms about quantum">Quantum Zoo</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Jincheng Ye. <br/>
+			This is my blog, welcome.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/galois-39" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="JinCheng Ye">JinCheng Ye</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  </body>
+</html>

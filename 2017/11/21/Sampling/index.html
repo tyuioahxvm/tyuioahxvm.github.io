@@ -1,0 +1,666 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  
+    <title>Sampling | Welcome to my world!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="JinCheng Ye">
+    
+
+    
+    <meta name="description" content="核心问题：如何又快（计算成本低）又好（采样效率高）地采样，一般问题归结为如何计算一个难以解析求解的积分，例如计算后验，期望等。 MC最古老可以追溯到投针问题，但是现代的MC算法由电子计算机的出现开始广泛使用。 解决解析计算下面的积分十分困难，可以转化为采样估计问题 $$\mathbb E[f]=\int f(z)p(z)dz$$ 通过一个统计量$\widehat{f}$来估计上面的积分 $$\wi">
+<meta name="keywords" content="Sampling,MC,Rejection Sampling,Importance Sampling,MCMC,Gibbs Sampling,HMC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sampling">
+<meta property="og:url" content="http://yoursite.com/2017/11/21/Sampling/index.html">
+<meta property="og:site_name" content="Welcome to my world!">
+<meta property="og:description" content="核心问题：如何又快（计算成本低）又好（采样效率高）地采样，一般问题归结为如何计算一个难以解析求解的积分，例如计算后验，期望等。 MC最古老可以追溯到投针问题，但是现代的MC算法由电子计算机的出现开始广泛使用。 解决解析计算下面的积分十分困难，可以转化为采样估计问题 $$\mathbb E[f]=\int f(z)p(z)dz$$ 通过一个统计量$\widehat{f}$来估计上面的积分 $$\wi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/rs.png">
+<meta property="og:image" content="http://yoursite.com/images/ars.png">
+<meta property="og:image" content="http://yoursite.com/images/gibbs.png">
+<meta property="og:updated_time" content="2018-04-02T11:57:06.556Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sampling">
+<meta name="twitter:description" content="核心问题：如何又快（计算成本低）又好（采样效率高）地采样，一般问题归结为如何计算一个难以解析求解的积分，例如计算后验，期望等。 MC最古老可以追溯到投针问题，但是现代的MC算法由电子计算机的出现开始广泛使用。 解决解析计算下面的积分十分困难，可以转化为采样估计问题 $$\mathbb E[f]=\int f(z)p(z)dz$$ 通过一个统计量$\widehat{f}$来估计上面的积分 $$\wi">
+<meta name="twitter:image" content="http://yoursite.com/images/rs.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/psi.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/psi.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/psi.png">
+    
+    <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/psi.png" alt="Welcome to my world!" title="Welcome to my world!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Welcome to my world!">Welcome to my world!</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/11/21/Sampling/" title="Sampling" itemprop="url">Sampling</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
+		
+  <p class="article-time">
+    <time datetime="2017-11-21T01:00:05.000Z" itemprop="datePublished"> 发表于 2017-11-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MC"><span class="toc-number">1.</span> <span class="toc-text">MC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Sampling"><span class="toc-number">2.</span> <span class="toc-text">Basic Sampling</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Rejection-Sampling"><span class="toc-number">2.1.</span> <span class="toc-text">Rejection Sampling</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Accepted-Ratio"><span class="toc-number">2.1.1.</span> <span class="toc-text">Accepted  Ratio</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Adaptive-Rejection-Sampling"><span class="toc-number">2.2.</span> <span class="toc-text">Adaptive Rejection Sampling</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Importance-Sampling"><span class="toc-number">2.3.</span> <span class="toc-text">Importance Sampling</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MCMC"><span class="toc-number">3.</span> <span class="toc-text">MCMC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Detailed-Balance"><span class="toc-number">3.1.</span> <span class="toc-text">Detailed Balance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Metropolis-Hastings-algorithm"><span class="toc-number">3.2.</span> <span class="toc-text">Metropolis-Hastings algorithm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#No-Free-Lunch"><span class="toc-number">3.2.1.</span> <span class="toc-text">No Free Lunch</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gibbs-Sampling"><span class="toc-number">3.3.</span> <span class="toc-text">Gibbs Sampling</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Algorithm"><span class="toc-number">3.3.1.</span> <span class="toc-text">Algorithm</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hamiltonian-MC"><span class="toc-number">3.4.</span> <span class="toc-text">Hamiltonian MC</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Algorithm-1"><span class="toc-number">3.4.1.</span> <span class="toc-text">Algorithm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reference"><span class="toc-number">3.4.2.</span> <span class="toc-text">Reference</span></a></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<p><strong>核心问题</strong>：如何又快（计算成本低）又好（采样效率高）地采样，一般问题归结为如何计算一个难以解析求解的积分，例如计算后验，期望等。</p>
+<h2 id="MC"><a href="#MC" class="headerlink" title="MC"></a>MC</h2><p>最古老可以追溯到投针问题，但是现代的MC算法由电子计算机的出现开始广泛使用。</p>
+<p>解决解析计算下面的积分十分困难，可以转化为采样估计问题</p>
+<p>$$<br>\mathbb E[f]=\int f(z)p(z)dz<br>$$</p>
+<p>通过一个统计量$\widehat{f}$来估计上面的积分</p>
+<p>$$<br>\widehat{f}=\frac{1}{L}\sum f(z^{(l)})<br>$$</p>
+<p>计算统计量$\widehat{f}$的均值与方差</p>
+<p>$$<br>\mathbb E[\widehat{f}] = \mathbb E[f] \<br>var[\widehat{f}] = \frac{1}{L} var[f]<br>$$</p>
+<p>上面的方差给出了MC采样的一个重要性质：<strong>计算精度与想要估计积分的维度无关，只与采样数量有关。</strong></p>
+<h2 id="Basic-Sampling"><a href="#Basic-Sampling" class="headerlink" title="Basic Sampling"></a>Basic Sampling</h2><h3 id="Rejection-Sampling"><a href="#Rejection-Sampling" class="headerlink" title="Rejection Sampling"></a>Rejection Sampling</h3><p>拒绝采样允许我们在更为复杂的分布上做采样。一般地，我们有一个较为简单的分布，在这个分布上采样后根据一个接受率来获得一个样本。具体操作如下：</p>
+<p>$p(z)=\widehat{p}(z)/Z$是目标分布，$q(z)$是基准分布，它们满足$\widehat{p}(z) \leq kq(z)$。</p>
+<ol>
+<li>从基准分布采样，$z_0 \sim q(z)$</li>
+<li>从均匀分布采样，$u \sim Uniform[0,1]$，如果$u&lt;\frac{\widehat{p}(z)}{kq(z)}$，接受样本$z_0$，否则拒绝样本。</li>
+</ol>
+<p><img src="/images/rs.png" alt=""></p>
+<h4 id="Accepted-Ratio"><a href="#Accepted-Ratio" class="headerlink" title="Accepted  Ratio"></a>Accepted  Ratio</h4><p>理论上k可以任意，只要满足$\widehat{p}(z) \leq kq(z)$即可。但是由于采样效率的问题，我们希望基准分布与目标分布尽可能贴近。</p>
+<p>$$<br>p(accet)=\int \frac{\widehat{p}(z)}{kq(z)} q(z)dz=\frac{Z}{k}<br>$$</p>
+<h3 id="Adaptive-Rejection-Sampling"><a href="#Adaptive-Rejection-Sampling" class="headerlink" title="Adaptive Rejection Sampling"></a>Adaptive Rejection Sampling</h3><p>一般的拒绝采样直接从一个单一的基准分布上采样，很多时候基准分布并不能很好地贴近目标分布，可以使用分段的方法。基准分布分成许多小段的指数分布。</p>
+<p><img src="/images/ars.png" alt=""></p>
+<p>$$<br>q(z)=k_i\lambda_i<br>\exp(-\lambda_i(z-z_i) \hspace{10pt } ,z_{i-1} \leq z \leq z_i<br>$$</p>
+<h3 id="Importance-Sampling"><a href="#Importance-Sampling" class="headerlink" title="Importance Sampling"></a>Importance Sampling</h3><p>一般的采样能从目标分布中进行采样，然后再计算积分值（期望等统计量）。重要性采样不能获取目标分布的真实样本，但是可以直接计算积分值。<br>
+$$
+\begin{align}
+\mathbb E[f] &= \int f(z)p(z)dz \\
+&= \int f(z)\frac{p(z)}{q(z)}q(z)dz \\
+&\approx \frac{1}{L}\sum_{l=1}^L \frac{p(z^{(l)})}{q(z^{(l)})}f(z^{(l)})
+\end{align}
+$$
+<br>考虑没有归一的分布, $p(z)=\widehat{p}(z)/Z_p,q(z)=\widehat{q}(z)/Z_q$<br>
+$$
+\begin{align}
+\mathbb E[f] &= \int f(z)p(z)dz \\
+&= \frac{Z_q}{Z_p}\int f(z)\frac{\widehat{p}(z)}{\widehat{q}(z)}q(z)dz \\
+&\approx \frac{Z_q}{Z_p}\frac{1}{L}\sum_{l=1}^L \widehat{r}_l f(z^{(l)})
+\end{align}
+$$
+
+$$
+\begin{align}
+\frac{Z_p}{Z_q} &= \frac{1}{Z_q} \int \widehat{p}(z)dz \\
+&= \int \frac{\widehat{p}(z)}{\widehat{q}(z)}q(z)dz \\
+&\approx \frac{1}{L}\sum_{l=1}^L \widehat{r}_l
+\end{align}
+$$
+<br>统一上述的式子</p>
+<p>$$<br>\mathbb E[f] \approx \sum_{l=1}^L w_l f(z^{(l)})<br>$$</p>
+<p>$$<br>w_l = \frac{\widehat{r}_l}{\sum \widehat{r}_j}<br>$$</p>
+<h2 id="MCMC"><a href="#MCMC" class="headerlink" title="MCMC"></a>MCMC</h2><h3 id="Detailed-Balance"><a href="#Detailed-Balance" class="headerlink" title="Detailed Balance"></a>Detailed Balance</h3><p>细致平衡保证分布在特定转移概率下稳定的充分条件（非必须）。数学表述为：</p>
+<p>$$<br>p(z)T(z \to z’)=p(z’)T(z’ \to z)<br>$$</p>
+<h3 id="Metropolis-Hastings-algorithm"><a href="#Metropolis-Hastings-algorithm" class="headerlink" title="Metropolis-Hastings algorithm"></a>Metropolis-Hastings algorithm</h3><p>利用马尔科夫链来进行采样，一个重要概念就是接受概率，与拒绝采样类似，接受概率关系到采样效率。</p>
+<p>$$<br>A(z’,z)=\min(1,\frac{p(z’)q(z|z’)}{p(z)q(z’|z)})<br>$$</p>
+<p>要求转移概率$q(z’|z)$满足遍历性。特殊地，Gibbs算法可以每次转移都有接受概率为1。但是Gibbs算法一帮来说还是收敛很慢。</p>
+<p>转移概率的形式可以多种，可以简单地取高斯分布$z’ \sim \mathcal N(z, \sigma^2)$ 。</p>
+<h4 id="No-Free-Lunch"><a href="#No-Free-Lunch" class="headerlink" title="No Free Lunch"></a>No Free Lunch</h4><p>如果考虑转移概率为高斯分布的形式，那么方差大小的选择影响着采样效率。方差太大那么在状态空间转移就快，但是拒绝率也高，导致采样效率并不一定高；方差太小那么在状态空间转移就慢，采样效率一样不高。</p>
+<h3 id="Gibbs-Sampling"><a href="#Gibbs-Sampling" class="headerlink" title="Gibbs Sampling"></a>Gibbs Sampling</h3><p>Gibbs采样一般要求目标分布有方便计算的条件概率，状态更新时采样的各个分量交替更新。这既是接受率高同时又是采样效率不高的原因（局域性太强）。</p>
+<p><img src="/images/gibbs.png" alt=""></p>
+<h4 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h4><ol>
+<li>初始化$ z_i, i = 1,..,N$</li>
+<li>For t=1,…,T<br>Sample $z^{t+1}_1 \sim p(z_1|z^t_ 2 ,…,z^t_N)$<br>Sample $z^{t+1}_2 \sim p(z_2|z^{t+1}_1,x^t_3 ,…,z^t_N)$<br>…<br>Sample $z^{t+1}_N \sim p(z_N|z^{t+1} ,…,z^{t+1}_{N-1})$</li>
+</ol>
+<h3 id="Hamiltonian-MC"><a href="#Hamiltonian-MC" class="headerlink" title="Hamiltonian MC"></a>Hamiltonian MC</h3><p><strong>一句话</strong>：实际上是利用一个动力学过程代替常规MCMC的概率转移过程，这样做可以提高采样效率。</p>
+<ol>
+<li>首先构造动力学过程，也就是哈密顿量</li>
+</ol>
+<p>$$<br>H(x, p)=K(p)+U(x)<br>$$</p>
+<p>其中$K(p)$代表动能，$U(x)$代表势能，根据哈密顿方程有：<br>
+$$
+\begin{cases}
+\frac{\partial x_i}{\partial t}=\frac{\partial H}{\partial p_i}=\frac{\partial K(p)}{\partial p_i} \\
+\frac{\partial p_i}{\partial t}=-\frac{\partial H}{\partial x_i}=-\frac{\partial U(x)}{\partial x_i}
+\end{cases}
+$$
+</p>
+<ol>
+<li>有了哈密顿方程后，可以通过数值方法计算微分方法组，这一步实际上对应常规概率转移的状态更新。</li>
+</ol>
+<p>蛙跳更新法（Leap Frog Method）</p>
+<p>时间片大小为$\delta$，动量每半步更新一次，位置变量每一步更新一次。<br>
+$$
+\begin{cases}
+p_i(t+\delta/2)=p_i(t)-\delta/2 \frac{\partial U}{\partial x_i(t)} \\
+x_i(t+\delta)=x_i(t)+\delta \frac{\partial K}{\partial p_i(t+\delta/2)} \\
+p_i(t+\delta)=p_i(t+\delta/2)-\delta/2 \frac{\partial U}{\partial x_i(t+\delta)} \\
+\end{cases}
+$$
+</p>
+<ol>
+<li><p>每一次循环，重新采样动量是必要的，因为构造的动力学过程是保守的，也就是说能量守恒。重新采样动量可以防止采样空间不完整。</p>
+</li>
+<li><p>得到了更新的变量后，还得像常规MCMC算法一样计算接受概率</p>
+</li>
+</ol>
+<p>$$<br>p(x,p)\propto \exp(-H(x,p))=\exp(-U(x))\exp(-K(p))\propto p(x)p(p)<br>$$</p>
+<p>我们只关心$p(x)$，只要令$U(x)=-\log p(x)$，就可以构造出合适的哈密顿量使我们能够在$p(x)$中采样。</p>
+<p>$$<br>A(x’,p’;x,p) = \min(1,\exp(-U(x’)-K(p’)+U(x)+K(p)))<br>$$</p>
+<p>有了接受概率，其他部分与常规MCMC相同。实际就是用哈密顿动力学过程取代了一个具有遍历性的转移概率。</p>
+<h4 id="Algorithm-1"><a href="#Algorithm-1" class="headerlink" title="Algorithm"></a>Algorithm</h4><ol>
+<li>$t=0$</li>
+<li>$x^{(0)} \sim \pi^{(0)}$</li>
+<li>重复直到$t=M$<br>$t=t+1$<br><strong>重新采样动量</strong>，$p_0 \sim p(p)$<br>$x_0 = x^{(t-1)}$<br>用蛙跳法计算新状态$(x’, p’)$，初始值为$(x_0,p_0)$<br>计算接受率$A(x’,p’;x,p) = \min(1,\exp(-U(x’)-K(p’)+U(x)+K(p)))$<br>从均匀分布采样，$u \sim Uniform[0,1]$，如果$u \leq A$则接受新状态，$x^{(t)}=x’$， 否则$x^{(t)}=x^{(t-1)}$</li>
+</ol>
+<h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p><a href="http://arogozhnikov.github.io/2016/12/19/markov_chain_monte_carlo.html" target="_blank" rel="noopener">一个可视化的网站</a></p>
+<p><a href="https://theclevermachine.wordpress.com/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/" target="_blank" rel="noopener">一个解释的网站</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Sampling/">Sampling</a><a href="/tags/MC/">MC</a><a href="/tags/Rejection-Sampling/">Rejection Sampling</a><a href="/tags/Importance-Sampling/">Importance Sampling</a><a href="/tags/MCMC/">MCMC</a><a href="/tags/Gibbs-Sampling/">Gibbs Sampling</a><a href="/tags/HMC/">HMC</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2017/11/21/Sampling/" data-title="Sampling | Welcome to my world!" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/11/21/Variational-Autoencoder/" title="Variational Autoencoder">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Variational Autoencoder</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/11/21/Variational-Bayesian-Method/"  title="Variational Bayesian Method">
+ <strong>下一篇：</strong><br/> 
+ <span>Variational Bayesian Method
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MC"><span class="toc-number">1.</span> <span class="toc-text">MC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Basic-Sampling"><span class="toc-number">2.</span> <span class="toc-text">Basic Sampling</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Rejection-Sampling"><span class="toc-number">2.1.</span> <span class="toc-text">Rejection Sampling</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Accepted-Ratio"><span class="toc-number">2.1.1.</span> <span class="toc-text">Accepted  Ratio</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Adaptive-Rejection-Sampling"><span class="toc-number">2.2.</span> <span class="toc-text">Adaptive Rejection Sampling</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Importance-Sampling"><span class="toc-number">2.3.</span> <span class="toc-text">Importance Sampling</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MCMC"><span class="toc-number">3.</span> <span class="toc-text">MCMC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Detailed-Balance"><span class="toc-number">3.1.</span> <span class="toc-text">Detailed Balance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Metropolis-Hastings-algorithm"><span class="toc-number">3.2.</span> <span class="toc-text">Metropolis-Hastings algorithm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#No-Free-Lunch"><span class="toc-number">3.2.1.</span> <span class="toc-text">No Free Lunch</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gibbs-Sampling"><span class="toc-number">3.3.</span> <span class="toc-text">Gibbs Sampling</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Algorithm"><span class="toc-number">3.3.1.</span> <span class="toc-text">Algorithm</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hamiltonian-MC"><span class="toc-number">3.4.</span> <span class="toc-text">Hamiltonian MC</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Algorithm-1"><span class="toc-number">3.4.1.</span> <span class="toc-text">Algorithm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reference"><span class="toc-number">3.4.2.</span> <span class="toc-text">Reference</span></a></li></ol></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/VB/" title="VB">VB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/VAE/" title="VAE">VAE<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IAF/" title="IAF">IAF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GEN/" title="GEN">GEN<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MMD/" title="MMD">MMD<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MC/" title="MC">MC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Importance-Sampling/" title="Importance Sampling">Importance Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MCMC/" title="MCMC">MCMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMC/" title="HMC">HMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MAP/" title="MAP">MAP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://math.nist.gov/quantum/zoo/" target="_blank" title=" All the algorithms about quantum">Quantum Zoo</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Jincheng Ye. <br/>
+			This is my blog, welcome.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/galois-39" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="JinCheng Ye">JinCheng Ye</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  </body>
+</html>
