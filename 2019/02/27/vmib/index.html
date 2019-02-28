@@ -4,24 +4,25 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
   
-    <title>Welcome to my world!</title>
+    <title>Variational Information | Welcome to my world!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="JinCheng Ye">
     
 
     
-    <meta name="description" content="resultsour te_ate: 0.843, te_pehe: 1.006 cevae te_ate: 0.855, te_pehe: 1.001 variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 ener">
+    <meta name="description" content="variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 energy-based bound, EB这种方法的下界为： $$I(x,y) \geq \mathbb E_{p(x,y)}[\log f(x,y)] - \">
+<meta name="keywords" content="VI">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Welcome to my world!">
-<meta property="og:url" content="http://yoursite.com/2019/02/27/vmib/index.html">
+<meta property="og:title" content="Variational Information">
+<meta property="og:url" content="https://qubitsystem.github.io/2019/02/27/vmib/index.html">
 <meta property="og:site_name" content="Welcome to my world!">
-<meta property="og:description" content="resultsour te_ate: 0.843, te_pehe: 1.006 cevae te_ate: 0.855, te_pehe: 1.001 variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 ener">
+<meta property="og:description" content="variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 energy-based bound, EB这种方法的下界为： $$I(x,y) \geq \mathbb E_{p(x,y)}[\log f(x,y)] - \">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-15T15:39:56.183Z">
+<meta property="og:updated_time" content="2019-02-28T01:51:31.978Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Welcome to my world!">
-<meta name="twitter:description" content="resultsour te_ate: 0.843, te_pehe: 1.006 cevae te_ate: 0.855, te_pehe: 1.001 variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 ener">
+<meta name="twitter:title" content="Variational Information">
+<meta name="twitter:description" content="variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 energy-based bound, EB这种方法的下界为： $$I(x,y) \geq \mathbb E_{p(x,y)}[\log f(x,y)] - \">
 
     
     <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
@@ -66,7 +67,7 @@
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
 						<label>Search</label>
 						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
-						<input type="hidden" name="q" value="site:yoursite.com">
+						<input type="hidden" name="q" value="site:qubitsystem.github.io">
 					</form>
 					
 					</li>
@@ -81,7 +82,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/02/27/vmib/" title="" itemprop="url"></a>
+      <a href="/2019/02/27/vmib/" title="Variational Information" itemprop="url">Variational Information</a>
   </h1>
   <p class="article-author">By
        
@@ -97,15 +98,11 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#results"><span class="toc-number">1.</span> <span class="toc-text">results</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#variational-information-bound-of-mutual-information"><span class="toc-number">2.</span> <span class="toc-text">variational information bound of mutual information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#energy-based-bound-EB"><span class="toc-number">2.1.</span> <span class="toc-text">energy-based bound, EB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MINE"><span class="toc-number">2.2.</span> <span class="toc-text">MINE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NWJ"><span class="toc-number">2.3.</span> <span class="toc-text">NWJ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JS"><span class="toc-number">2.4.</span> <span class="toc-text">JS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCPC"><span class="toc-number">2.5.</span> <span class="toc-text">TCPC</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#variational-information-bound-of-mutual-information"><span class="toc-number">1.</span> <span class="toc-text">variational information bound of mutual information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#energy-based-bound-EB"><span class="toc-number">1.1.</span> <span class="toc-text">energy-based bound, EB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MINE"><span class="toc-number">1.2.</span> <span class="toc-text">MINE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NWJ"><span class="toc-number">1.3.</span> <span class="toc-text">NWJ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JS"><span class="toc-number">1.4.</span> <span class="toc-text">JS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCPC"><span class="toc-number">1.5.</span> <span class="toc-text">TCPC</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h1 id="results"><a href="#results" class="headerlink" title="results"></a>results</h1><p><strong>our</strong></p>
-<p>te_ate: 0.843, te_pehe: 1.006</p>
-<p><strong>cevae</strong></p>
-<p>te_ate: 0.855, te_pehe: 1.001</p>
-<h1 id="variational-information-bound-of-mutual-information"><a href="#variational-information-bound-of-mutual-information" class="headerlink" title="variational information bound of mutual information"></a>variational information bound of mutual information</h1><blockquote>
+		<h1 id="variational-information-bound-of-mutual-information"><a href="#variational-information-bound-of-mutual-information" class="headerlink" title="variational information bound of mutual information"></a>variational information bound of mutual information</h1><blockquote>
 <p>On variational lower bounds of mutual information</p>
 </blockquote>
 <p>简述：总结当前互信息的估计方法</p>
@@ -138,13 +135,18 @@
 <div class="article-catetags">
 
 
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/VI/">VI</a>
+  </div>
+
 </div>
 
 
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2019/02/27/vmib/" data-title="Welcome to my world!" data-tsina="" class="share clearfix">
+	  <div data-url="https://qubitsystem.github.io/2019/02/27/vmib/" data-title="Variational Information | Welcome to my world!" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -158,18 +160,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2019/02/27/factorVAE/" title="">
+ <a href="/2019/02/27/factorVAE/" title="FactorVAE">
   <strong>上一篇：</strong><br/>
   <span>
-  (no title)</span>
+  FactorVAE</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2019/02/27/rigetti_computing/"  title="">
+<a href="/2019/02/27/rigetti_computing/"  title="Rigetti Computing">
  <strong>下一篇：</strong><br/> 
- <span>(no title)
+ <span>Rigetti Computing
 </span>
 </a>
 </div>
@@ -186,7 +188,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#results"><span class="toc-number">1.</span> <span class="toc-text">results</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#variational-information-bound-of-mutual-information"><span class="toc-number">2.</span> <span class="toc-text">variational information bound of mutual information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#energy-based-bound-EB"><span class="toc-number">2.1.</span> <span class="toc-text">energy-based bound, EB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MINE"><span class="toc-number">2.2.</span> <span class="toc-text">MINE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NWJ"><span class="toc-number">2.3.</span> <span class="toc-text">NWJ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JS"><span class="toc-number">2.4.</span> <span class="toc-text">JS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCPC"><span class="toc-number">2.5.</span> <span class="toc-text">TCPC</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#variational-information-bound-of-mutual-information"><span class="toc-number">1.</span> <span class="toc-text">variational information bound of mutual information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#energy-based-bound-EB"><span class="toc-number">1.1.</span> <span class="toc-text">energy-based bound, EB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MINE"><span class="toc-number">1.2.</span> <span class="toc-text">MINE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NWJ"><span class="toc-number">1.3.</span> <span class="toc-text">NWJ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JS"><span class="toc-number">1.4.</span> <span class="toc-text">JS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCPC"><span class="toc-number">1.5.</span> <span class="toc-text">TCPC</span></a></li></ol></li></ol>
  
   </div>
 
@@ -209,19 +211,11 @@
 			
 		
 			
-				<li><a href="/tags/VAE/" title="VAE">VAE<sup>2</sup></a></li>
+				<li><a href="/tags/VAE/" title="VAE">VAE<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
 			
 		
 			
@@ -229,15 +223,7 @@
 			
 		
 			
-				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/GEN/" title="GEN">GEN<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
 			
 		
 			
@@ -245,11 +231,27 @@
 			
 		
 			
+				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/MC/" title="MC">MC<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
+				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
 			
 		
 			
@@ -269,7 +271,11 @@
 			
 		
 			
-				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/VI/" title="VI">VI<sup>1</sup></a></li>
 			
 		
 			
@@ -277,7 +283,7 @@
 			
 		
 			
-				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+				<li><a href="/tags/quantum-computing/" title="quantum computing">quantum computing<sup>1</sup></a></li>
 			
 		
 		</ul>
