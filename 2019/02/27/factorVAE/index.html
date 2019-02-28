@@ -1,25 +1,30 @@
 
-  
-    <!DOCTYPE HTML>
+ <!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
   
-    <title>categories | Welcome to my world!</title>
+    <title>Welcome to my world!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="JinCheng Ye">
     
 
     
-    <meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+    <meta name="description" content="FactorVAE 简述：希望解耦合隐变量 方法：逼近$p(z_1,z_2,…)=p(z_1)p(z_2)…$ 使用KL散度可以度量，文章使用的是鉴别器。 $$\overline{q(z)} = \prod q(z_i) \KL(q(z)| \overline{q(z)})$$ 通过markov采样$q(z)=1/N \sum q(z|x_i)$，有点意思">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Welcome to my world!">
+<meta property="og:url" content="http://yoursite.com/2019/02/27/factorVAE/index.html">
 <meta property="og:site_name" content="Welcome to my world!">
+<meta property="og:description" content="FactorVAE 简述：希望解耦合隐变量 方法：逼近$p(z_1,z_2,…)=p(z_1)p(z_2)…$ 使用KL散度可以度量，文章使用的是鉴别器。 $$\overline{q(z)} = \prod q(z_i) \KL(q(z)| \overline{q(z)})$$ 通过markov采样$q(z)=1/N \sum q(z|x_i)$，有点意思">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-11-21T12:30:36.512Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/27/factorVAE/factorVAE.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/27/factorVAE/alg_factorvae.png">
+<meta property="og:updated_time" content="2019-01-06T05:33:14.978Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
+<meta name="twitter:title" content="Welcome to my world!">
+<meta name="twitter:description" content="FactorVAE 简述：希望解耦合隐变量 方法：逼近$p(z_1,z_2,…)=p(z_1)p(z_2)…$ 使用KL散度可以度量，文章使用的是鉴别器。 $$\overline{q(z)} = \prod q(z_i) \KL(q(z)| \overline{q(z)})$$ 通过markov采样$q(z)=1/N \sum q(z|x_i)$，有点意思">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/27/factorVAE/factorVAE.png">
 
     
     <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
@@ -34,9 +39,9 @@
     <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
-      <body>
-        <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
-          
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      
 <div>
 		
 			<div id="imglogo">
@@ -71,28 +76,42 @@
 				</ul>
 			</nav>			
 </div>
-        </header>
-        <div id="container">
-          <div id="main" class="page" itemscope itemprop="blogPost">
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
   
 	<article itemprop="articleBody"> 
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/categories/index.html" title="categories" itemprop="url">categories</a>
+      <a href="/2019/02/27/factorVAE/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
 		
   <p class="article-time">
-    <time datetime="2017-11-21T12:30:36.000Z" itemprop="datePublished"> 发表于 2017-11-21</time>
+    <time datetime="2019-02-27T12:29:33.946Z" itemprop="datePublished"> 发表于 2019-02-27</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		  
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FactorVAE"><span class="toc-number">1.</span> <span class="toc-text">FactorVAE</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="FactorVAE"><a href="#FactorVAE" class="headerlink" title="FactorVAE"></a>FactorVAE</h1><p><img src="factorVAE.png" alt=""></p>
+<p>简述：希望解耦合隐变量</p>
+<p>方法：逼近$p(z_1,z_2,…)=p(z_1)p(z_2)…$</p>
+<p>使用KL散度可以度量，文章使用的是鉴别器。</p>
+<p>$$<br>\overline{q(z)} = \prod q(z_i) \<br>KL(q(z)| \overline{q(z)})<br>$$</p>
+<p>通过markov采样$q(z)=1/N \sum q(z|x_i)$，有点意思</p>
+<p><img src="alg_factorvae.png" alt=""></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -104,7 +123,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/categories/index.html" data-title="categories | Welcome to my world!" data-tsina="" class="share clearfix">
+	  <div data-url="http://yoursite.com/2019/02/27/factorVAE/" data-title="Welcome to my world!" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -115,13 +134,157 @@
    	       
 	</article>
 	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/02/27/vmib/"  title="">
+ <strong>下一篇：</strong><br/> 
+ <span>(no title)
+</span>
+</a>
+</div>
+
+</nav>
+
 	
 
 
 
 </div>  
-        </div>
-        <footer><div id="footer" >
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FactorVAE"><span class="toc-number">1.</span> <span class="toc-text">FactorVAE</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/VB/" title="VB">VB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/VAE/" title="VAE">VAE<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sampling/" title="Sampling">Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NF/" title="NF">NF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/real-NVP/" title="real NVP">real NVP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IAF/" title="IAF">IAF<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PNL/" title="PNL">PNL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GEN/" title="GEN">GEN<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Quantum-Algorithm/" title="Quantum Algorithm">Quantum Algorithm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MMD/" title="MMD">MMD<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MC/" title="MC">MC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Rejection-Sampling/" title="Rejection Sampling">Rejection Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Importance-Sampling/" title="Importance Sampling">Importance Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MCMC/" title="MCMC">MCMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMC/" title="HMC">HMC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NICE/" title="NICE">NICE<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MAP/" title="MAP">MAP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://math.nist.gov/quantum/zoo/" target="_blank" title=" All the algorithms about quantum">Quantum Zoo</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
 	
 	<div class="line">
 		<span></span>
@@ -160,7 +323,7 @@
 		</p>
 </div>
 </footer>
-        <script src="/js/jquery-2.0.3.min.js"></script>
+    <script src="/js/jquery-2.0.3.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 <script src="/js/jquery.qrcode-0.12.0.min.js"></script>
@@ -204,8 +367,36 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
   });
 });
 </script>
@@ -359,6 +550,5 @@ var _hmt = _hmt || [];
 
 <!-- Tiny_search End --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
-      </body>
-     </html>
-     
+  </body>
+</html>

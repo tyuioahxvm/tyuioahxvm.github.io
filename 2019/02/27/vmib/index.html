@@ -4,27 +4,24 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
   
-    <title>PNL, ICA, VB | Welcome to my world!</title>
+    <title>Welcome to my world!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="JinCheng Ye">
     
 
     
-    <meta name="description" content="Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning  问题：解决非线性的盲源分离问题。 方法：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。 Model$$x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_">
-<meta name="keywords" content="PNL,VB">
+    <meta name="description" content="resultsour te_ate: 0.843, te_pehe: 1.006 cevae te_ate: 0.855, te_pehe: 1.001 variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 ener">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PNL, ICA, VB">
-<meta property="og:url" content="http://yoursite.com/2017/11/24/PNL-VB/index.html">
+<meta property="og:title" content="Welcome to my world!">
+<meta property="og:url" content="http://yoursite.com/2019/02/27/vmib/index.html">
 <meta property="og:site_name" content="Welcome to my world!">
-<meta property="og:description" content="Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning  问题：解决非线性的盲源分离问题。 方法：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。 Model$$x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_">
+<meta property="og:description" content="resultsour te_ate: 0.843, te_pehe: 1.006 cevae te_ate: 0.855, te_pehe: 1.001 variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 ener">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/images/PNFA.png">
-<meta property="og:updated_time" content="2018-04-02T11:56:44.785Z">
+<meta property="og:updated_time" content="2019-01-15T15:39:56.183Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PNL, ICA, VB">
-<meta name="twitter:description" content="Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning  问题：解决非线性的盲源分离问题。 方法：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。 Model$$x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_">
-<meta name="twitter:image" content="http://yoursite.com/images/PNFA.png">
+<meta name="twitter:title" content="Welcome to my world!">
+<meta name="twitter:description" content="resultsour te_ate: 0.843, te_pehe: 1.006 cevae te_ate: 0.855, te_pehe: 1.001 variational information bound of mutual information On variational lower bounds of mutual information  简述：总结当前互信息的估计方法 ener">
 
     
     <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
@@ -84,14 +81,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2017/11/24/PNL-VB/" title="PNL, ICA, VB" itemprop="url">PNL, ICA, VB</a>
+      <a href="/2019/02/27/vmib/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
 		
   <p class="article-time">
-    <time datetime="2017-11-24T05:56:37.000Z" itemprop="datePublished"> 发表于 2017-11-24</time>
+    <time datetime="2019-02-27T12:29:33.935Z" itemprop="datePublished"> 发表于 2019-02-27</time>
     
   </p>
 </header>
@@ -100,34 +97,46 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#results"><span class="toc-number">1.</span> <span class="toc-text">results</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#variational-information-bound-of-mutual-information"><span class="toc-number">2.</span> <span class="toc-text">variational information bound of mutual information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#energy-based-bound-EB"><span class="toc-number">2.1.</span> <span class="toc-text">energy-based bound, EB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MINE"><span class="toc-number">2.2.</span> <span class="toc-text">MINE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NWJ"><span class="toc-number">2.3.</span> <span class="toc-text">NWJ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JS"><span class="toc-number">2.4.</span> <span class="toc-text">JS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCPC"><span class="toc-number">2.5.</span> <span class="toc-text">TCPC</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<blockquote>
-<p>Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning</p>
+		<h1 id="results"><a href="#results" class="headerlink" title="results"></a>results</h1><p><strong>our</strong></p>
+<p>te_ate: 0.843, te_pehe: 1.006</p>
+<p><strong>cevae</strong></p>
+<p>te_ate: 0.855, te_pehe: 1.001</p>
+<h1 id="variational-information-bound-of-mutual-information"><a href="#variational-information-bound-of-mutual-information" class="headerlink" title="variational information bound of mutual information"></a>variational information bound of mutual information</h1><blockquote>
+<p>On variational lower bounds of mutual information</p>
 </blockquote>
-<p><strong>问题</strong>：解决非线性的盲源分离问题。</p>
-<p><strong>方法</strong>：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。</p>
-<h2 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h2><p><img src="/images/PNFA.png" alt="PNFA 结构"><br>$$<br>x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_i]+n_i(t)<br>$$<br>$x_i(t)$是可观测数据，$s_i(t)$是独立信号源，$f_i[*,W_i]$代表MLP，$n_i$是独立噪声</p>
-<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>ELBO作为优化目标，过程与VAE十分相似。<br>
-$$
-\begin{align}
-\mathcal L &=\mathbb E_{q(S,\theta)}[\log\frac{q(S,\theta)}{p(S,\theta,X)}] \\
-&=\mathbb E_{q(S,\theta)}[\frac{q(S,\theta)}{p(S,\theta)}]-\mathbb E_{q(S,\theta)}[p(X|S,\theta)]
-\end{align}
-$$
-<br>$$<br>p(X|S,\theta)=\prod_{i,t}\mathcal N(x_i(t);f_i[\sum a_{ijs_j(t)},W_i],\sigma_i^2)<br>$$</p>
+<p>简述：总结当前互信息的估计方法</p>
+<h2 id="energy-based-bound-EB"><a href="#energy-based-bound-EB" class="headerlink" title="energy-based bound, EB"></a>energy-based bound, EB</h2><p>这种方法的下界为：</p>
+<p>$$<br>I(x,y) \geq \mathbb E_{p(x,y)}[\log f(x,y)] - \mathbb E_{p(y)}[\frac{\mathbb E_{p(x)}[f(x,y)]}{a}+\log a -1]<br>$$</p>
+<p>推导方法</p>
+<p>$$<br>\mathbb E_{p(y)}[KL(p(x|y)| q(x|y))] \geq 0<br>$$</p>
+<p>$$<br>I(x,y) = \mathbb E_{p(y)}[\mathbb E_{p(x)}\log \frac{p(x|y)}{p(x)}] \geq 0<br>$$</p>
+<p>$$<br>I(x,y) \geq \mathbb E_{p(x,y)} [\log q(x|y) - \log p(x)]<br>$$</p>
+<p>基于能量的方法主要体现在这一部分，假设$p(x|y)=p(x)\frac{f(x,y)}{Z(y)}, Z(y)=\mathbb E_{p(x)}[f(x,y)]$</p>
+<p>$$<br>I(x,y) \geq \mathbb E_{p(x,y)} [\log f(x,y)] - \mathbb E_{p(y)}[\log \mathbb E_{p(x)}[f(x,y)]]<br>$$</p>
+<p>由于<br>$$<br>\log x \leq x/a + \log a -1<br>$$<br>当$x=a$时，等号成立</p>
+<p>得到<br>$$<br>I(x,y) \geq I_{EB}(x,y) := \mathbb E_{p(x,y)} [\log f(x,y)] - \mathbb E_{p(y)}[\mathbb E_{p(x)}[f(x,y)]/a+\log a -1]<br>$$</p>
+<h2 id="MINE"><a href="#MINE" class="headerlink" title="MINE"></a>MINE</h2><p>取$a=E_{p(x)}[f(x,y)]$, $T=\log f(x,y)$</p>
+<p>$$<br>I(x,y) \geq I_{MINE}(x,y) := \mathbb E_{p(x,y)} [T] - \mathbb E_{p(y)}[\log \mathbb E_{p(x)}[\exp(T)]]<br>$$</p>
+<h2 id="NWJ"><a href="#NWJ" class="headerlink" title="NWJ"></a>NWJ</h2><p>取$a=e$</p>
+<p>$$<br>I(x,y) \geq I_{NWJ}(x,y) := \mathbb E_{p(x,y)} [\log f(x,y)] - 1/e\mathbb E_{p(x)p(y)}[f(x,y)]<br>$$</p>
+<h2 id="JS"><a href="#JS" class="headerlink" title="JS"></a>JS</h2><p>在NWJ方法的基础上，令$f(x,y)=\exp(V(x,y)+1)$</p>
+<p>$$<br>I(x,y) \geq I_{JS}(x,y) := 1 + \mathbb E_{p(x,y)} [V(x,y)] - \mathbb E_{p(x)p(y)}[\exp(V(x,y))]<br>$$</p>
+<h2 id="TCPC"><a href="#TCPC" class="headerlink" title="TCPC"></a>TCPC</h2><p>这种方法考虑了数据集批大小的影响，假设$p(y|x$已经知道</p>
+<p>$$<br>I(x,y) = \mathbb E_{x_{1:K}\in \mathcal D}[1/K \sum_{i=1}^K KL(p(y|x_i)|p(y))]<br>$$</p>
+<p>边缘分布$p(y)$估计为：</p>
+<p>$$<br>m(y) = 1/K \sum_{i=1}^K p(y|x_i)<br>$$</p>
+<p>$$<br>1/K \sum_{i=1}^K [KL(p(y|x_i)|p(y))] = 1/K \sum_{i=1}^K [KL(p(y|x_i)|m(y))] + KL(m(y)|p(y))<br>$$</p>
+<p>有</p>
+<p>$$<br>I(x,y) \geq I_{TCPC}(x,y) := \mathbb E_{x_{1:K}\in \mathcal D}[1/K \sum_{i=1}^K KL(p(y|x_i)|m(y))]<br>$$</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PNL/">PNL</a><a href="/tags/VB/">VB</a>
-  </div>
 
 </div>
 
@@ -135,7 +144,7 @@ $$
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2017/11/24/PNL-VB/" data-title="PNL, ICA, VB | Welcome to my world!" data-tsina="" class="share clearfix">
+	  <div data-url="http://yoursite.com/2019/02/27/vmib/" data-title="Welcome to my world!" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -149,18 +158,18 @@ $$
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2017/11/24/Geometric-Enclosing-Networks/" title="Geometric Enclosing Networks">
+ <a href="/2019/02/27/factorVAE/" title="">
   <strong>上一篇：</strong><br/>
   <span>
-  Geometric Enclosing Networks</span>
+  (no title)</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2017/11/21/Normalizing-Flows/"  title="Normalizing Flows">
+<a href="/2019/02/27/rigetti_computing/"  title="">
  <strong>下一篇：</strong><br/> 
- <span>Normalizing Flows
+ <span>(no title)
 </span>
 </a>
 </div>
@@ -177,7 +186,7 @@ $$
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#results"><span class="toc-number">1.</span> <span class="toc-text">results</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#variational-information-bound-of-mutual-information"><span class="toc-number">2.</span> <span class="toc-text">variational information bound of mutual information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#energy-based-bound-EB"><span class="toc-number">2.1.</span> <span class="toc-text">energy-based bound, EB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MINE"><span class="toc-number">2.2.</span> <span class="toc-text">MINE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NWJ"><span class="toc-number">2.3.</span> <span class="toc-text">NWJ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JS"><span class="toc-number">2.4.</span> <span class="toc-text">JS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCPC"><span class="toc-number">2.5.</span> <span class="toc-text">TCPC</span></a></li></ol></li></ol>
  
   </div>
 

@@ -4,27 +4,26 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
   
-    <title>PNL, ICA, VB | Welcome to my world!</title>
+    <title>Welcome to my world!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="JinCheng Ye">
     
 
     
-    <meta name="description" content="Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning  问题：解决非线性的盲源分离问题。 方法：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。 Model$$x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_">
-<meta name="keywords" content="PNL,VB">
+    <meta name="description" content="@rigetti computing这个量子计算公司开源了许多项目，包括  qvm quilc pyquil grove  该公司的设计架构如下   QCS提供量子计算云服务 QVM提供量子计算机的模拟器 QPU提供真实的量子计算机硬件 Pyquil提供初级的量子程序设计工具 Grove提供高级的量子程序设计工具，包括QVE,QPE,QFT等高级的程序调用  基本概念gate: 量子门，量子计算的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PNL, ICA, VB">
-<meta property="og:url" content="http://yoursite.com/2017/11/24/PNL-VB/index.html">
+<meta property="og:title" content="Welcome to my world!">
+<meta property="og:url" content="http://yoursite.com/2019/02/27/rigetti_computing/index.html">
 <meta property="og:site_name" content="Welcome to my world!">
-<meta property="og:description" content="Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning  问题：解决非线性的盲源分离问题。 方法：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。 Model$$x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_">
+<meta property="og:description" content="@rigetti computing这个量子计算公司开源了许多项目，包括  qvm quilc pyquil grove  该公司的设计架构如下   QCS提供量子计算云服务 QVM提供量子计算机的模拟器 QPU提供真实的量子计算机硬件 Pyquil提供初级的量子程序设计工具 Grove提供高级的量子程序设计工具，包括QVE,QPE,QFT等高级的程序调用  基本概念gate: 量子门，量子计算的">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/images/PNFA.png">
-<meta property="og:updated_time" content="2018-04-02T11:56:44.785Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/27/rigetti_computing/rigetti_computing.png">
+<meta property="og:updated_time" content="2019-02-15T12:23:33.462Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PNL, ICA, VB">
-<meta name="twitter:description" content="Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning  问题：解决非线性的盲源分离问题。 方法：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。 Model$$x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_">
-<meta name="twitter:image" content="http://yoursite.com/images/PNFA.png">
+<meta name="twitter:title" content="Welcome to my world!">
+<meta name="twitter:description" content="@rigetti computing这个量子计算公司开源了许多项目，包括  qvm quilc pyquil grove  该公司的设计架构如下   QCS提供量子计算云服务 QVM提供量子计算机的模拟器 QPU提供真实的量子计算机硬件 Pyquil提供初级的量子程序设计工具 Grove提供高级的量子程序设计工具，包括QVE,QPE,QFT等高级的程序调用  基本概念gate: 量子门，量子计算的">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/27/rigetti_computing/rigetti_computing.png">
 
     
     <link rel="alternative" href="/atom.xml" title="Welcome to my world!" type="application/atom+xml">
@@ -84,14 +83,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2017/11/24/PNL-VB/" title="PNL, ICA, VB" itemprop="url">PNL, ICA, VB</a>
+      <a href="/2019/02/27/rigetti_computing/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="JinCheng Ye" target="_blank" itemprop="author">JinCheng Ye</a>
 		
   <p class="article-time">
-    <time datetime="2017-11-24T05:56:37.000Z" itemprop="datePublished"> 发表于 2017-11-24</time>
+    <time datetime="2019-02-27T12:29:18.491Z" itemprop="datePublished"> 发表于 2019-02-27</time>
     
   </p>
 </header>
@@ -100,34 +99,48 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#rigetti-computing"><span class="toc-number">1.</span> <span class="toc-text">@rigetti computing</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Noise-Mode"><span class="toc-number">1.2.</span> <span class="toc-text">Noise Mode</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<blockquote>
-<p>Post-Nonlinear Independent Component Analysis by Variational Bayesian Learning</p>
-</blockquote>
-<p><strong>问题</strong>：解决非线性的盲源分离问题。</p>
-<p><strong>方法</strong>：模型使用链接矩阵$A$表达线性叠加部分，MLP表达非线性部分。变分贝叶斯方法（VB）做推断，梯度下降求解。</p>
-<h2 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h2><p><img src="/images/PNFA.png" alt="PNFA 结构"><br>$$<br>x_i(t)=f_i[\sum_{j=1}^Ma_{ij}s_j(t),W_i]+n_i(t)<br>$$<br>$x_i(t)$是可观测数据，$s_i(t)$是独立信号源，$f_i[*,W_i]$代表MLP，$n_i$是独立噪声</p>
-<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>ELBO作为优化目标，过程与VAE十分相似。<br>
-$$
-\begin{align}
-\mathcal L &=\mathbb E_{q(S,\theta)}[\log\frac{q(S,\theta)}{p(S,\theta,X)}] \\
-&=\mathbb E_{q(S,\theta)}[\frac{q(S,\theta)}{p(S,\theta)}]-\mathbb E_{q(S,\theta)}[p(X|S,\theta)]
-\end{align}
-$$
-<br>$$<br>p(X|S,\theta)=\prod_{i,t}\mathcal N(x_i(t);f_i[\sum a_{ijs_j(t)},W_i],\sigma_i^2)<br>$$</p>
-  
+		<h1 id="rigetti-computing"><a href="#rigetti-computing" class="headerlink" title="@rigetti computing"></a>@rigetti computing</h1><p>这个量子计算公司开源了许多项目，包括</p>
+<ul>
+<li>qvm</li>
+<li>quilc</li>
+<li>pyquil</li>
+<li>grove</li>
+</ul>
+<p>该公司的设计架构如下</p>
+<p><img src="rigetti_computing.png" alt=""></p>
+<ul>
+<li>QCS提供量子计算云服务</li>
+<li>QVM提供量子计算机的模拟器</li>
+<li>QPU提供真实的量子计算机硬件</li>
+<li>Pyquil提供初级的量子程序设计工具</li>
+<li>Grove提供高级的量子程序设计工具，包括QVE,QPE,QFT等高级的程序调用</li>
+</ul>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><strong>gate</strong>: 量子门，量子计算的基本部件</p>
+<p>例如：常用的量子门包括：</p>
+<p>$$<br>H = \frac{1}{\sqrt{2}}\pmatrix{1, 1\<br>1, -1} \<br>X = \pmatrix{0,1\<br>1,0} \<br>Y = \pmatrix{0,-i\<br>i,0} \<br>Z = \pmatrix{1,0\<br>0,-1} \<br>CNOT = \pmatrix{1,0,0,0\<br>0,1,0,0\<br>0,0,0,1\<br>0,0,1,0} \<br>$$</p>
+<p><strong>Program</strong>：量子程序，在pyquil中，这个类用于装载我们编写的量子线路，例如：Program(H(0),CNOT(0,1))</p>
+<p><strong>measure</strong>：量子测量，用于获取Program执行后的结果，通过.run_and_measure(program, trials)调用</p>
+<p><strong>WavefunctionSimulator</strong>：量子波函数模拟器，可以直接计算理论上量子程序的波函数结果，与measure的方法或者probability的方法不同，通过调用.wavefunction(program)可以获得量子程序执行后波函数形式的运算结果</p>
+<p><strong>QUIL</strong>：量子指令语言</p>
+<p><strong>QUILC</strong>：量子指令语言编译器，把抽象的quil编译成特定架构QVM可执行的语言native-quil，通过.compile(program)或者:</p>
+<ol>
+<li>$quil\to native\ quil$: .compiler.quil_to_native_quil(program)</li>
+<li>$native\ quil \to executable$: .compiler.native_quil_to_executable(nq_program)</li>
+</ol>
+<p><strong>QVM</strong>：量子虚拟机，一个通用量子计算机的仿真器，通过QVMConnection()连接</p>
+<p>常用的导入方式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyquil <span class="keyword">import</span> Program</span><br><span class="line"><span class="keyword">from</span> pyquil.gates <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> pyquil.api <span class="keyword">import</span> QVMConnection</span><br></pre></td></tr></table></figure>
+<p>一个简单的Bell State产生程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyquil <span class="keyword">import</span> Program</span><br><span class="line"><span class="keyword">from</span> pyquil.gates <span class="keyword">import</span> CNOT, H</span><br><span class="line"></span><br><span class="line">p = Program(H(<span class="number">0</span>), CNOT(<span class="number">0</span>,<span class="number">1</span>))</span><br><span class="line">print(p)</span><br></pre></td></tr></table></figure>
+<h2 id="Noise-Mode"><a href="#Noise-Mode" class="headerlink" title="Noise Mode"></a>Noise Mode</h2>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PNL/">PNL</a><a href="/tags/VB/">VB</a>
-  </div>
 
 </div>
 
@@ -135,7 +148,7 @@ $$
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2017/11/24/PNL-VB/" data-title="PNL, ICA, VB | Welcome to my world!" data-tsina="" class="share clearfix">
+	  <div data-url="http://yoursite.com/2019/02/27/rigetti_computing/" data-title="Welcome to my world!" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -149,18 +162,18 @@ $$
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2017/11/24/Geometric-Enclosing-Networks/" title="Geometric Enclosing Networks">
+ <a href="/2019/02/27/vmib/" title="">
   <strong>上一篇：</strong><br/>
   <span>
-  Geometric Enclosing Networks</span>
+  (no title)</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2017/11/21/Normalizing-Flows/"  title="Normalizing Flows">
+<a href="/2018/04/01/Quantum-Algorithms/"  title="Quantum Algorithms">
  <strong>下一篇：</strong><br/> 
- <span>Normalizing Flows
+ <span>Quantum Algorithms
 </span>
 </a>
 </div>
@@ -177,7 +190,7 @@ $$
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Model"><span class="toc-number">1.</span> <span class="toc-text">Model</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">2.</span> <span class="toc-text">Loss Function</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#rigetti-computing"><span class="toc-number">1.</span> <span class="toc-text">@rigetti computing</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Noise-Mode"><span class="toc-number">1.2.</span> <span class="toc-text">Noise Mode</span></a></li></ol></li></ol>
  
   </div>
 
