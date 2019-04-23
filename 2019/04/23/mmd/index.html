@@ -246,18 +246,16 @@
 <p>简介：MMD既可以作为GAN的判别器，也可以认为是一种生成模型的评价函数。本文把MMD当作一种可优化评价函数，一般的情况下，我们固定核函数的带宽$\sigma$。通过假设检验的方法判别样本是否属于同一分布。</p>
 <p>背景：一般判别样本是否来自同一个分布有两个基本的方法，第一，基于f-divergences，它涉及密度比率（density ratio）,但是在高维数据和数据稀疏的情况下不好使。第二，基于测试函数（witness function）的方法，例如MMD就是这种方法的一个特例。这种方法不直接比较概率密度，而是间接地通过一些特殊函数计算值来判断分布是否一致。</p>
 <h2 id="Permutation-Test"><a href="#Permutation-Test" class="headerlink" title="Permutation Test"></a>Permutation Test</h2><p>置换测试的基本思想是对样本的部分多次抽样计算统计量，从而得到经验的统计量分布，进而可以计算p值。</p>
-<script type="math/tex; mode=display">
-MMD_k^2(P,Q) := \mathbb E_{x,x'}[k(x,x')]+\mathbb E_{y,y'}[k(y,y')]-2\mathbb E_{x,y}[k(x,y)]</script><p>MMD的估计值为：</p>
-<script type="math/tex; mode=display">
-\widehat{MMD}_U^2(X,Y) := \frac{1}{m(m-1)/2}\sum_{i\neq i'}k(X_i,X_{i'})+\frac{1}{m(m-1)/2}\sum_{i\neq i'}k(Y_i,Y_{i'})-\frac{2}{m(m-1)/2}\sum_{i\neq j}k(X_i,Y_{j})</script><p>假设检验：</p>
-<script type="math/tex; mode=display">
-H_0: P=Q \\
-H_1: P\neq Q</script><p>检验使用的统计量为$m \widehat{MMD}$，错误拒绝率为$\alpha$，阈值为$c_{\alpha}$。</p>
+<p>$$<br>MMD_k^2(P,Q) := \mathbb E_{x,x’}[k(x,x’)]+\mathbb E_{y,y’}[k(y,y’)]-2\mathbb E_{x,y}[k(x,y)]<br>$$</p>
+<p>MMD的估计值为：</p>
+<p>$$<br>\widehat{MMD}<em>U^2(X,Y) := \frac{1}{m(m-1)/2}\sum</em>{i\neq i’}k(X_i,X_{i’})+\frac{1}{m(m-1)/2}\sum_{i\neq i’}k(Y_i,Y_{i’})-\frac{2}{m(m-1)/2}\sum_{i\neq j}k(X_i,Y_{j})<br>$$</p>
+<p>假设检验：</p>
+<p>$$<br>H_0: P=Q \<br>H_1: P\neq Q<br>$$</p>
+<p>检验使用的统计量为$m \widehat{MMD}$，错误拒绝率为$\alpha$，阈值为$c_{\alpha}$。</p>
 <p>由于接受阈值的计算要求知道$P$的准确分布，所以我们没法精确计算它，只能近似估计。如何近似估计，这要使用置换测试的方法。</p>
-<h3 id="t-statistic"><a href="#t-statistic" class="headerlink" title="t-statistic"></a>t-statistic</h3><script type="math/tex; mode=display">
-t_k(P,Q) := {MMD}_k^2(P,Q)/\sqrt(V_m^{(k)}(P,Q)) \\
-\widehat{t}_k(X,Y) := \widehat{MMD}_U^2(X,Y)/\sqrt(\widehat{V}_m(X,Y))</script><h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><p>$P$为二维标准正态分布，$Q$为XY协方差为$(\epsilon-1)/(\epsilon+1)$的二维正态分布。当$\epsilon=1$时，$P=Q$。</p>
-<p><img src="exp_mmd.png" alt=""></p>
+<h3 id="t-statistic"><a href="#t-statistic" class="headerlink" title="t-statistic"></a>t-statistic</h3><p>$$<br>t_k(P,Q) := {MMD}_k^2(P,Q)/\sqrt(V_m^{(k)}(P,Q)) \<br>\widehat{t}_k(X,Y) := \widehat{MMD}_U^2(X,Y)/\sqrt(\widehat{V}_m(X,Y))<br>$$</p>
+<h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><p>$P$为二维标准正态分布，$Q$为XY协方差为$(\epsilon-1)/(\epsilon+1)$的二维正态分布。当$\epsilon=1$时，$P=Q$。</p>
+<p><img src="/images/exp_mmd.png" alt=""></p>
 
     </div>
   </div>
