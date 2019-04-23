@@ -240,13 +240,13 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h1 id="FactorVAE"><a href="#FactorVAE" class="headerlink" title="FactorVAE"></a>FactorVAE</h1><p><img src="factorVAE.png" alt=""></p>
+      <h1 id="FactorVAE"><a href="#FactorVAE" class="headerlink" title="FactorVAE"></a>FactorVAE</h1><p><img src="/images/factorvae.png" alt=""></p>
 <p>简述：希望解耦合隐变量</p>
 <p>方法：逼近$p(z_1,z_2,…)=p(z_1)p(z_2)…$</p>
 <p>使用KL散度可以度量，文章使用的是鉴别器。</p>
 <p>$$<br>\overline{q(z)} = \prod q(z_i) \<br>KL(q(z)| \overline{q(z)})<br>$$</p>
 <p>通过markov采样$q(z)=1/N \sum q(z|x_i)$，有点意思</p>
-<p><img src="alg_factorvae.png" alt=""></p>
+<p><img src="/images/alg_factorvae.png" alt=""></p>
 
     </div>
   </div>
