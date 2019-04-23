@@ -8,12 +8,12 @@
   
   
   
-  <title>FactorVAE | Welcome to my world!</title>
+  <title>Practical Bayesian Optimization of Machine Learning Algorithms | Welcome to my world!</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="VAE," />
+    <meta name="keywords" content="Bayesian Optimization," />
   
 
   <script>
@@ -221,17 +221,17 @@
 
 <div class="post">
   <h1 class="article-title">
-    <span>FactorVAE</span>
+    <span>Practical Bayesian Optimization of Machine Learning Algorithms</span>
   </h1>
   <div class="article-top-meta">
     <span>
       发布 : 
-      2019-02-27
+      2019-04-23
     </span>
     
     
       <span>
-        浏览 : <span class="article-timer" data-identity="factorVAE"></span>
+        浏览 : <span class="article-timer" data-identity="bopt"></span>
       </span>
     
   </div>
@@ -240,13 +240,34 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h1 id="FactorVAE"><a href="#FactorVAE" class="headerlink" title="FactorVAE"></a>FactorVAE</h1><p><img src="factorVAE.png" alt=""></p>
-<p>简述：希望解耦合隐变量</p>
-<p>方法：逼近$p(z_1,z_2,…)=p(z_1)p(z_2)…$</p>
-<p>使用KL散度可以度量，文章使用的是鉴别器。</p>
-<p>$$<br>\overline{q(z)} = \prod q(z_i) \<br>KL(q(z)| \overline{q(z)})<br>$$</p>
-<p>通过markov采样$q(z)=1/N \sum q(z|x_i)$，有点意思</p>
-<p><img src="alg_factorvae.png" alt=""></p>
+      <h1 id="Practical-Bayesian-Optimization-of-Machine-Learning-Algorithms"><a href="#Practical-Bayesian-Optimization-of-Machine-Learning-Algorithms" class="headerlink" title="Practical Bayesian Optimization of Machine Learning Algorithms"></a>Practical Bayesian Optimization of Machine Learning Algorithms</h1><h2 id="Main-idea"><a href="#Main-idea" class="headerlink" title="Main idea"></a>Main idea</h2><p>把超参优化问题考虑成黑箱优化，类似于老虎机，要摇动杠杆才知道回报（赢还是输）。贝叶斯方法也是基于这种思路，它的特殊之处就是给未知的东西加了先验，更具体地说是用高斯过程来建模未知的优化目标。</p>
+<h2 id="Relative"><a href="#Relative" class="headerlink" title="Relative"></a>Relative</h2><ul>
+<li><p>grid search</p>
+</li>
+<li><p>random search</p>
+</li>
+</ul>
+<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>优化问题为：</p>
+<p>$$<br>x_{best} = \arg min_{x}f(x)<br>$$</p>
+<p>假设目标函数$f:X\to \mathbb R$，服从高斯过程。它是从高斯过程的先验中采样得到的，而这个先验由我们已知的数据点计算。那么这些数据点是哪里来的呢？它不像平常训练用数据集，一开始就给定，是要迭代生成的。如何确定下一个选取点，这要靠acquisition function来决定。它的作用有些像梯度。</p>
+<p>$$<br>x_{next} = \arg max_{x}a(x)<br>$$</p>
+<p>采集函数（acquisition function）可以认为是某种探索策略的数学表达式。策略类型包括向导改进型（Improvement-based Policies），信息型（Information-based Policies，探索如何减少熵）等。</p>
+<p>向导改进型策略的常用的采集函数包括以下三种。</p>
+<ul>
+<li>Probability of Improvement (PI)<br>策略的思想是最大化提高目前最优解的概率。在高斯过程模型下的表达式为:</li>
+</ul>
+<p>$$<br>\begin{aligned}<br>a_{PI}(x;\mathcal D_n,\theta)&amp;= \Pr[f(x_{best})-\mu(x,\mathcal D_n,\theta)\geq 0] \<br>&amp;=\Phi(\gamma(x))<br>\end{aligned}<br>$$</p>
+<p>$$<br>\gamma(x)=\frac{f(x_{best})-\mu(x,\mathcal D_n,\theta)}{\sigma(x,\mathcal D_n,\theta)} \<br>\Phi(x)=\int_{-\infty}^{x}1/\sqrt{2\pi}\exp(-x^2/2)dx<br>$$</p>
+<ul>
+<li>Expected Improvement(EI)<br>策略的思想是最大化估计值小于当前最优值的期望。</li>
+</ul>
+<p>$$<br>\mathbf{I}=\max{0,f(x_{best})-\mu(x,\mathcal D_n,\theta)}<br>$$</p>
+<p>$$<br>\begin{aligned}<br>a_{EI}(x;\mathcal D_n,\theta)&amp;= \mathbb E[\mathbf{I}] \<br>&amp;=(f(x_{best})-\mu(x,\mathcal D_n,\theta))\Phi(\gamma(x,\mathcal D_n,\theta))+\sigma(x,\mathcal D_n,\theta)\phi(x,\mathcal D_n,\theta)<br>\end{aligned}<br>$$</p>
+<p>$$<br>\phi(x)=1/\sqrt{2\pi}\exp(-x^2/2)<br>$$</p>
+<ul>
+<li>Lower Confidence Bound(LCB)</li>
+</ul>
+<p>$$<br>a_{LCB}=\mu(x,\mathcal D_n,\theta)-\kappa\sigma(x,\mathcal D_n,\theta) \<br>x_{next} = \arg min_x a_{LCB}<br>$$</p>
 
     </div>
   </div>
@@ -258,7 +279,7 @@
         
           本文作者 : jckun <br/>
         
-        原文链接 : <a href="">https://tyuioahxvm.github.io/2019/02/27/factorVAE/</a><br>
+        原文链接 : <a href="">https://tyuioahxvm.github.io/2019/04/23/bopt/</a><br>
         版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
         </blockquote>
       </div>
@@ -324,8 +345,8 @@
           <i class="iconfont icon-06tags"></i>标签: 
           
           <span class="span--tag">
-            <a href="/tags/VAE/">
-              #VAE
+            <a href="/tags/Bayesian-Optimization/">
+              #Bayesian Optimization
             </a>
           </span>
           
@@ -350,13 +371,13 @@
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/2019/02/27/vmib/" target="_self">Variational Information</a>
+        <a href="/2019/02/27/factorVAE/" target="_self">FactorVAE</a>
       </div>
     
     
       <div class="nav-next">
         下一篇:
-        <a href="/2019/04/23/bopt/" target="_self">Practical Bayesian Optimization of Machine Learning Algorithms</a>
+        <a href="/2019/04/23/mmd/" target="_self">Maximum Mean Discrepancy</a>
         <i class="iconfont icon-next"></i>
       </div>
     
