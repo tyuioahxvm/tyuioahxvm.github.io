@@ -8,12 +8,12 @@
   
   
   
-  <title>Maximum Mean Discrepancy | Welcome to my world!</title>
+  <title>Neural Processes | Welcome to my world!</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="MMD," />
+    <meta name="keywords" content="NP," />
   
 
   <script>
@@ -221,17 +221,17 @@
 
 <div class="post">
   <h1 class="article-title">
-    <span>Maximum Mean Discrepancy</span>
+    <span>Neural Processes</span>
   </h1>
   <div class="article-top-meta">
     <span>
       发布 : 
-      2019-04-23
+      2019-04-24
     </span>
     
     
       <span>
-        浏览 : <span class="article-timer" data-identity="mmd"></span>
+        浏览 : <span class="article-timer" data-identity="NP"></span>
       </span>
     
   </div>
@@ -240,22 +240,51 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h1 id="MMD"><a href="#MMD" class="headerlink" title="MMD"></a>MMD</h1><blockquote>
-<p>GENERATIVE MODELS AND MODEL CRITICISM VIA OPTIMIZED MAXIMUM MEAN DISCREPANCY</p>
+      <h1 id="Neural-Processes"><a href="#Neural-Processes" class="headerlink" title="Neural Processes"></a>Neural Processes</h1><blockquote>
+<p>arXiv:1807.01622，DeepMind</p>
 </blockquote>
-<p>简介：MMD既可以作为GAN的判别器，也可以认为是一种生成模型的评价函数。本文把MMD当作一种可优化评价函数，一般的情况下，我们固定核函数的带宽$\sigma$。通过假设检验的方法判别样本是否属于同一分布。</p>
-<p>背景：一般判别样本是否来自同一个分布有两个基本的方法，第一，基于f-divergences，它涉及密度比率（density ratio）,但是在高维数据和数据稀疏的情况下不好使。第二，基于测试函数（witness function）的方法，例如MMD就是这种方法的一个特例。这种方法不直接比较概率密度，而是间接地通过一些特殊函数计算值来判断分布是否一致。</p>
-<h2 id="Permutation-Test"><a href="#Permutation-Test" class="headerlink" title="Permutation Test"></a>Permutation Test</h2><p>置换测试的基本思想是对样本的部分多次抽样计算统计量，从而得到经验的统计量分布，进而可以计算p值。</p>
-<p>$$<br>MMD_k^2(P,Q) := \mathbb E_{x,x’}[k(x,x’)]+\mathbb E_{y,y’}[k(y,y’)]-2\mathbb E_{x,y}[k(x,y)]<br>$$</p>
-<p>MMD的估计值为：</p>
-<p>$$<br>\widehat{MMD}<em>U^2(X,Y) := \frac{1}{m(m-1)/2}\sum</em>{i\neq i’}k(X_i,X_{i’})+\frac{1}{m(m-1)/2}\sum_{i\neq i’}k(Y_i,Y_{i’})-\frac{2}{m(m-1)/2}\sum_{i\neq j}k(X_i,Y_{j})<br>$$</p>
-<p>假设检验：</p>
-<p>$$<br>H_0: P=Q \<br>H_1: P\neq Q<br>$$</p>
-<p>检验使用的统计量为$m \widehat{MMD}$，错误拒绝率为$\alpha$，阈值为$c_{\alpha}$。</p>
-<p>由于接受阈值的计算要求知道$P$的准确分布，所以我们没法精确计算它，只能近似估计。如何近似估计，这要使用置换测试的方法。</p>
-<h3 id="t-statistic"><a href="#t-statistic" class="headerlink" title="t-statistic"></a>t-statistic</h3><p>$$<br>t_k(P,Q) := {MMD}_k^2(P,Q)/\sqrt(V_m^{(k)}(P,Q)) \<br>\widehat{t}_k(X,Y) := \widehat{MMD}_U^2(X,Y)/\sqrt(\widehat{V}_m(X,Y))<br>$$</p>
-<h2 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h2><p>$P$为二维标准正态分布，$Q$为XY协方差为$(\epsilon-1)/(\epsilon+1)$的二维正态分布。当$\epsilon=1$时，$P=Q$。</p>
-<p><img src="/images/exp_mmd.png" alt=""></p>
+<p><strong>目的：提出一种新的函数逼近方法，神经过程。它与高斯过程相比，节省了计算成本$O(n+m)$，同时能够估计预测的不确定度。</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>计算复杂度</th>
+<th>模型函数选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NP</td>
+<td>$O(m+n)$</td>
+<td>自适应</td>
+</tr>
+<tr>
+<td>GP</td>
+<td>$O((m+n)^3)$</td>
+<td>手选核函数形式</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h2><p><img src="/images/model_np.png" alt=""></p>
+<p>模型包括三个关键部件：</p>
+<ol>
+<li>encoder<br> 输入一对数据$(x,y)_i$，输出$r_i=h((x,y)_i)$用于聚合部件产生隐变量。</li>
+<li>aggregator<br> 隐变量服从$z\sim \mathcal N(\mu(r),\sigma^2(r))$，$r=\sum_i r_i$，算法复杂度为$O(m+n)$，由于聚合函数的线性特征简化了高斯过程的核函数计算。</li>
+<li>condition decoder<br> $y_T=g(z,x_T)$，$g$是神经网络用于到的类似于$y_T=f(x_T)$的预测效果。</li>
+</ol>
+<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>构造目标函数的思路类似VAE，记$x_{1:m},y_{1:m}$为context，$x_{m+1:n},y_{m+1:n}$为target。</p>
+<p>$$<br>\begin{aligned}<br>\mathcal L &amp;= \log p(y_{m+1:n}|x_{1:n},y_{1:m}) \<br>&amp;\geq \mathbb E_{q(z|x_{1:n},y_{1:n})}[\log \frac{p(y_{m+1:n}|x_{1:n},y_{1:m})}{q(z|x_{1:n},y_{1:n})}] \<br>&amp;= \mathbb E_{q(z|x_{1:n},y_{1:n})}[\log \frac{p(y_{m+1:n}|z,x_{1:n},y_{1:m})p(z|x_{1:n},y_{1:m})}{q(z|x_{1:n},y_{1:n})}] \<br>&amp;= \mathbb E_{q(z|x_{1:n},y_{1:n})}[\log \frac{p(y_{m+1:n}|z,x_{m+1:n})p(z|x_{1:m},y_{1:m})}{q(z|x_{1:n},y_{1:n})}] \<br>&amp;= \mathbb E_{q(z|x_{1:n},y_{1:n})}[\log p(y_{m+1:n}|z,x_{m+1:n}) + \log \frac{p(z|x_{1:m},y_{1:m})}{q(z|x_{1:n},y_{1:n})}] \<br>&amp;= \mathbb E_{q(z|x_{1:n},y_{1:n})}[\sum_{i=m+1}^n \log p(y_i|z,x_i) + \log \frac{p(z|x_{1:m},y_{1:m})}{q(z|x_{1:n},y_{1:n})}] \<br>&amp;\geq \mathbb E_{q(z|x_{1:n},y_{1:n})}[\sum_{i=m+1}^n \log p(y_i|z,x_i) + \log \frac{q(z|x_{1:m},y_{1:m})}{q(z|x_{1:n},y_{1:n})}]<br>\end{aligned}<br>$$</p>
+<p>最后一个不等式由下面式子推到出来。</p>
+<p>$$<br>\mathbb E_{q(z|x_{1:n},y_{1:n})}[\log \frac{p(z|x_{1:m},y_{1:m})}{q(z|x_{1:m},y_{1:m})}] = \mathbb E_{q(x_{1:m},y_{1:m}|x_{1:n},y_{1:n})} \mathbb E_{p(z|x_{1:m},y_{1:m})}[\log \frac{p(z|x_{1:m},y_{1:m})}{q(z|x_{1:m},y_{1:m})}] \geq 0<br>$$</p>
+<h2 id="Related"><a href="#Related" class="headerlink" title="Related"></a>Related</h2><p><img src="/images/related_model.png" alt=""></p>
+<p>与CNP的度别在于，CNP对于相同的context values不可以产生不同的样本，这样就没有度量预测不确定性的度量。</p>
+<h2 id="Results"><a href="#Results" class="headerlink" title="Results"></a>Results</h2><ul>
+<li><p>1-D,2-D regression</p>
+</li>
+<li><p>Black-box optimisation</p>
+</li>
+</ul>
+<p><img src="/images/blackbox_opt.png" alt=""></p>
 
     </div>
   </div>
@@ -267,7 +296,7 @@
         
           本文作者 : jckun <br/>
         
-        原文链接 : <a href="">https://tyuioahxvm.github.io/2019/04/23/mmd/</a><br>
+        原文链接 : <a href="">https://tyuioahxvm.github.io/2019/04/24/NP/</a><br>
         版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
         </blockquote>
       </div>
@@ -333,8 +362,8 @@
           <i class="iconfont icon-06tags"></i>标签: 
           
           <span class="span--tag">
-            <a href="/tags/MMD/">
-              #MMD
+            <a href="/tags/NP/">
+              #NP
             </a>
           </span>
           
@@ -359,15 +388,9 @@
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/2019/04/23/bopt/" target="_self">Practical Bayesian Optimization of Machine Learning Algorithms</a>
+        <a href="/2019/04/23/mmd/" target="_self">Maximum Mean Discrepancy</a>
       </div>
     
-    
-      <div class="nav-next">
-        下一篇:
-        <a href="/2019/04/24/NP/" target="_self">Neural Processes</a>
-        <i class="iconfont icon-next"></i>
-      </div>
     
   </nav>
 
